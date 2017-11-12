@@ -31,7 +31,7 @@ public class SysPacket {
     private Date packetEndTime;
 
     @Column(name = "packet_status")
-    private Date packetStatus;
+    private int packetStatus;
 
     public Long getId() {
         return id;
@@ -73,11 +73,11 @@ public class SysPacket {
         this.packetEndTime = packetEndTime;
     }
 
-    public Date getPacketStatus() {
+    public int getPacketStatus() {
         return packetStatus;
     }
 
-    public void setPacketStatus(Date packetStatus) {
+    public void setPacketStatus(int packetStatus) {
         this.packetStatus = packetStatus;
     }
 }

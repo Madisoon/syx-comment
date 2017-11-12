@@ -33,7 +33,7 @@ public class SysUser {
     private int userDep;
 
     @Column(name = "user_packet_no")
-    private Long userPacketNo;
+    private String userPacketNo;
 
     @Column(name = "user_create_time")
     private Date userCreateTime;
@@ -86,11 +86,11 @@ public class SysUser {
         this.userDep = userDep;
     }
 
-    public Long getUserPacketNo() {
+    public String getUserPacketNo() {
         return userPacketNo;
     }
 
-    public void setUserPacketNo(Long userPacketNo) {
+    public void setUserPacketNo(String userPacketNo) {
         this.userPacketNo = userPacketNo;
     }
 

@@ -2,13 +2,13 @@ package com.fantasi.common.db.dao;
 
 import com.fantasi.common.db.IDBPool;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 public class BaseDao {
 	private final static Logger logger = Logger.getLogger(BaseDao.class);
 	protected IDBPool pool = null;
@@ -35,7 +35,6 @@ public class BaseDao {
 				 String className = stackElements[i].getClassName();
 				 if (className.contains("com.fantasi")) {
 					 sb.append(stackElements[i].getClassName()+"\t");
-//					 sb.append(stackElements[i].getFileName()+"\t");
 					 sb.append(stackElements[i].getLineNumber()+"\t");
 					 sb.append(stackElements[i].getMethodName() + "\n");	 
 				 }

@@ -1,5 +1,9 @@
 package com.syx.comment.module.sys.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.syx.comment.entity.SysPacket;
+import com.syx.comment.entity.SysUser;
+
 /**
  * 描述:
  * 数据包管理的api
@@ -9,10 +13,14 @@ package com.syx.comment.module.sys.service;
  */
 public interface PacketManageService {
     /**
-     * 添加数据包
+     * 更细并保存数据包的信息
      *
-     * @param packetInfo
+     * @param sysPacket
+     * @param sysUser
+     * @return SysPacket
      */
-    void addPacketInfo(String packetInfo);
+    SysPacket savePacketInformation(SysPacket sysPacket, SysUser sysUser);
+
+    JSONArray getPacketInformation(String areaId);
 
 }

@@ -29,7 +29,7 @@ public class SysTaskFinish {
     @Column(name = "task_title")
     private String taskTitle;
 
-    @Column(name = "task_title")
+    @Column(name = "task_site")
     private String taskSite;
 
     @Column(name = "task_nick_name")
