@@ -1,7 +1,6 @@
 package com.syx.comment.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * 描述:
@@ -14,4 +13,37 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "sys_task_release_department")
 public class SysTaskReleaseDepartment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "task_release_id")
+    private Long taskReleaseId;
+
+    @Column(name = "dep_no")
+    private Long depNo;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getTaskReleaseId() {
+        return taskReleaseId;
+    }
+
+    public void setTaskReleaseId(Long taskReleaseId) {
+        this.taskReleaseId = taskReleaseId;
+    }
+
+    public Long getDepNo() {
+        return depNo;
+    }
+
+    public void setDepNo(Long depNo) {
+        this.depNo = depNo;
+    }
 }
