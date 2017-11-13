@@ -26,7 +26,7 @@ public class SysTaskConfig {
     @Column(name = "task_explain")
     private String taskExplain;
 
-    @Column(name = "task_statusd")
+    @Column(name = "task_status")
     private int taskStatus;
 
     @Column(name = "task_packet_no")
