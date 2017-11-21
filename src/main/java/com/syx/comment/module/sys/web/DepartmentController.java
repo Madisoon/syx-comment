@@ -1,6 +1,7 @@
 package com.syx.comment.module.sys.web;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysDepartment;
 import com.syx.comment.entity.SysPacket;
@@ -33,12 +34,15 @@ public class DepartmentController {
     @PutMapping(value = "/saveDepartmentInformation")
     @ApiOperation(value = "saveDepartmentInformation", notes = "添加部门信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "depInfo", value = "部门信息", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "depInfo", value = "部门信息", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "userInfo", value = "部长信息", required = true, dataType = "STRING")
     })
-    public ResponseEntity saveDepartmentInformation(@RequestParam("depInfo") String depInfo) {
+    public ResponseEntity saveDepartmentInformation(@RequestParam("depInfo") String depInfo,
+                                                    @RequestParam("userInfo") String userInfo) {
         try {
             SysDepartment sysDepartment = JSON.parseObject(depInfo, SysDepartment.class);
-            sysDepartment = departmentManageService.saveDepartmentInformation(sysDepartment);
+            SysUser sysUser = JSON.parseObject(userInfo, SysUser.class);
+            sysDepartment = departmentManageService.saveDepartmentInformation(sysDepartment, sysUser);
             return ResponseEntity.ok().body(sysDepartment);
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,8 +58,8 @@ public class DepartmentController {
     })
     public ResponseEntity getDepartmentInformation(@RequestParam("depPacketNo") String depPacketNo) {
         try {
-            List<SysDepartment> list = departmentManageService.getDepartmentInformation(depPacketNo);
-            return ResponseEntity.ok().body(list);
+            JSONArray jsonArray = departmentManageService.getDepartmentInformation(depPacketNo);
+            return ResponseEntity.ok().body(jsonArray);
         } catch (Exception e) {
             e.printStackTrace();
             ExecResult er = new ExecResult(false, e.getMessage());

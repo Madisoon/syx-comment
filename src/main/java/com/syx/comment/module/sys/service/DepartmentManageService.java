@@ -1,6 +1,8 @@
 package com.syx.comment.module.sys.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.syx.comment.entity.SysDepartment;
+import com.syx.comment.entity.SysUser;
 
 import java.util.List;
 
@@ -13,12 +15,13 @@ import java.util.List;
  */
 public interface DepartmentManageService {
     /**
-     * 添加部门
+     * 添加部门，同时添加本部门部长的账号
      *
      * @param sysDepartment
+     * @param sysUser
      * @return
      */
-    SysDepartment saveDepartmentInformation(SysDepartment sysDepartment);
+    SysDepartment saveDepartmentInformation(SysDepartment sysDepartment, SysUser sysUser);
 
     /**
      * 根据数据包编码的得到所有的部门信息
@@ -26,10 +29,11 @@ public interface DepartmentManageService {
      * @param depPacketNo
      * @return
      */
-    List<SysDepartment> getDepartmentInformation(String depPacketNo);
+    JSONArray getDepartmentInformation(String depPacketNo);
 
     /**
      * 删除部门信息
+     *
      * @param id
      */
     void deleteDepartment(Long id);

@@ -142,7 +142,7 @@ public class RoleManageServiceImpl implements RoleManageService {
     @Override
     public JSONArray getUserRole(String roleId) {
         JSONArray jsonArray = new JSONArray();
-        String getUserRoleSql = "SELECT b.* FROM sys_role_user a,sys_user b WHERE a.role_id = ? AND a.user_id = b.user_loginname";
+        String getUserRoleSql = "SELECT b.* FROM sys_role_user a,sys_user b WHERE a.role_id = ? AND a.user_id = b.user_name";
         List<Map<String, String>> list = new ArrayList<>();
         list = baseDao.rawQuery(getUserRoleSql, new String[]{roleId});
         jsonArray = (JSONArray) JSON.toJSON(list);

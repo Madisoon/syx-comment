@@ -49,7 +49,7 @@ public class PacketManageServiceImpl implements PacketManageService {
 
     @Override
     public JSONArray getPacketInformation(String areaId) {
-        String sql = "SELECT a.*,b.user_name,b.user_pwd FROM sys_packet a , " +
+        String sql = "SELECT a.*,b.user_name,b.user_pwd,b.id as user_id FROM sys_packet a , " +
                 "sys_user b  WHERE a.packet_no = b.user_packet_no";
         JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sql));
         return jsonArray;

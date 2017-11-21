@@ -17,6 +17,9 @@ public class SysTaskRelease {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "task_config_id")
+    private Long taskConfigId;
+
     @Column(name = "task_name")
     private String taskName;
 
@@ -38,6 +41,14 @@ public class SysTaskRelease {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getTaskConfigId() {
+        return taskConfigId;
+    }
+
+    public void setTaskConfigId(Long taskConfigId) {
+        this.taskConfigId = taskConfigId;
     }
 
     public String getTaskName() {

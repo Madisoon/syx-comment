@@ -1,6 +1,10 @@
 package com.syx.comment.module.task.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysTaskConfig;
+import com.syx.comment.entity.SysTaskRelease;
+import com.syx.comment.entity.SysTaskReleaseDepartment;
 
 import java.util.List;
 
@@ -20,5 +24,38 @@ public interface TaskConfigService {
      */
     SysTaskConfig saveTaskConfigInformation(SysTaskConfig sysTaskConfig);
 
+    /**
+     * 根据系统编号获取任务配置
+     *
+     * @param packetNo
+     * @return
+     */
     List<SysTaskConfig> getTaskConfigByPacketNo(String packetNo);
+
+    /**
+     * 更新发布任务的内容
+     *
+     * @param sysTaskRelease
+     * @return
+     */
+    SysTaskRelease saveTaskReleaseInformation(SysTaskRelease sysTaskRelease);
+
+    /**
+     * 分页得到任务的信息
+     *
+     * @param id
+     * @param pageNumber
+     * @param pageSize
+     * @return
+     */
+    JSONObject getTaskReleaseInformation(String id, String pageNumber, String pageSize);
+
+    /**
+     * 保存任务适用部门的信息
+     *
+     * @param taskId
+     * @param taskDep
+     * @return
+     */
+    public List<SysTaskReleaseDepartment> saveTaskDepartmentInformation(String taskId, String taskDep);
 }
