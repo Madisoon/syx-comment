@@ -17,10 +17,17 @@ public interface PacketManageService {
      *
      * @param sysPacket
      * @param sysUser
+     * @param areaId
      * @return SysPacket
      */
-    SysPacket savePacketInformation(SysPacket sysPacket, SysUser sysUser);
+    SysPacket savePacketInformation(SysPacket sysPacket, SysUser sysUser, String areaId);
 
+    /**
+     * 根据地区信息得到全国所有的系统
+     *
+     * @param areaId
+     * @return
+     */
     JSONArray getPacketInformation(String areaId);
 
 }

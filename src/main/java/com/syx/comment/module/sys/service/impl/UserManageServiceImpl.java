@@ -8,11 +8,13 @@ import com.syx.comment.config.JwtConfig;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.UserManageService;
 import com.syx.comment.repository.SysUserRepository;
+import com.syx.comment.utils.SqlEasy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -92,5 +94,43 @@ public class UserManageServiceImpl implements UserManageService {
         returnJson.put("module", jsonArrayModule);
         returnJson.put("function", jsonObjectFunction);
         return returnJson;
+    }
+
+    @Override
+    public SysUser saveUserInformation(SysUser sysUser) {
+        sysUser.setUserCreateTime(new Date());
+        return sysUserRepository.save(sysUser);
+    }
+
+    @Override
+    public JSONObject deleteUserInformation(String userId) {
+        String[] userIdS = userId.split(",");
+        int userIdSLen = userIdS.length;
+        List<SysUser> list = new ArrayList<>();
+        for (int i = 0; i < userIdSLen; i++) {
+            SysUser sysUser = new SysUser();
+            sysUser.setId(Long.parseLong(userIdS[i]));
+            list.add(sysUser);
+        }
+        JSONObject jsonObject = new JSONObject();
+        try {
+            sysUserRepository.delete(list);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            jsonObject.put("result", 0);
+        }
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject getUserInformationByDep(String depNo, String pageSize, String pageNumber) {
+        String sqlTotal = "SELECT * FROM sys_user a WHERE a.user_dep = ? ORDER BY a.user_create_time DESC ";
+        String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
+        List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo});
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", list.size());
+        jsonObject.put("data", jsonArray);
+        return jsonObject;
     }
 }

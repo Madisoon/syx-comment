@@ -23,6 +23,9 @@ public class SysUser {
     @Column(name = "user_nick_name")
     private String userNickName;
 
+    @Column(name = "user_phone")
+    private String userPhone;
+
     @Column(name = "user_pwd")
     private String userPwd;
 
@@ -60,6 +63,14 @@ public class SysUser {
 
     public void setUserNickName(String userNickName) {
         this.userNickName = userNickName;
+    }
+
+    public String getUserPhone() {
+        return userPhone;
+    }
+
+    public void setUserPhone(String userPhone) {
+        this.userPhone = userPhone;
     }
 
     public String getUserPwd() {

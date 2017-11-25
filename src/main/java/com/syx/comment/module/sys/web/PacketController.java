@@ -31,14 +31,16 @@ public class PacketController {
     @ApiOperation(value = "savePacketInformation", notes = "更新数据包信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "packetInfo", value = "数据包信息", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "userInfo", value = "数据包管理员信息", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "userInfo", value = "数据包管理员信息", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "areaId", value = "地区id", required = true, dataType = "STRING")
     })
     public ResponseEntity savePacketInformation(@RequestParam("packetInfo") String packetInfo,
+                                                @RequestParam("areaId") String areaId,
                                                 @RequestParam("userInfo") String userInfo) {
         try {
             SysPacket sysPacket = JSON.parseObject(packetInfo, SysPacket.class);
             SysUser sysUser = JSON.parseObject(userInfo, SysUser.class);
-            sysPacket = packetManageService.savePacketInformation(sysPacket, sysUser);
+            sysPacket = packetManageService.savePacketInformation(sysPacket, sysUser, areaId);
             return ResponseEntity.ok().body(sysPacket);
         } catch (Exception e) {
             e.printStackTrace();

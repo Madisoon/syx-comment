@@ -17,6 +17,9 @@ public class SysTaskFinish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "task_number")
+    private String taskNumber;
+
     @Column(name = "task_name")
     private String taskName;
 
@@ -48,7 +51,7 @@ public class SysTaskFinish {
     private String taskExplain;
 
     @Column(name = "task_status")
-    private int taskStaus;
+    private int taskStatus;
 
     @Column(name = "task_mark")
     private int taskMark;
@@ -65,12 +68,26 @@ public class SysTaskFinish {
     @Column(name = "task_packet_no")
     private Long taskPacketNo;
 
+    @Column(name = "task_check_time")
+    private Date taskCheckTime;
+
+    @Column(name = "task_check_people")
+    private String taskCheckPeople;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTaskNumber() {
+        return taskNumber;
+    }
+
+    public void setTaskNumber(String taskNumber) {
+        this.taskNumber = taskNumber;
     }
 
     public String getTaskName() {
@@ -153,12 +170,12 @@ public class SysTaskFinish {
         this.taskExplain = taskExplain;
     }
 
-    public int getTaskStaus() {
-        return taskStaus;
+    public int getTaskStatus() {
+        return taskStatus;
     }
 
-    public void setTaskStaus(int taskStaus) {
-        this.taskStaus = taskStaus;
+    public void setTaskStatus(int taskStatus) {
+        this.taskStatus = taskStatus;
     }
 
     public int getTaskMark() {
@@ -199,5 +216,21 @@ public class SysTaskFinish {
 
     public void setTaskPacketNo(Long taskPacketNo) {
         this.taskPacketNo = taskPacketNo;
+    }
+
+    public Date getTaskCheckTime() {
+        return taskCheckTime;
+    }
+
+    public void setTaskCheckTime(Date taskCheckTime) {
+        this.taskCheckTime = taskCheckTime;
+    }
+
+    public String getTaskCheckPeople() {
+        return taskCheckPeople;
+    }
+
+    public void setTaskCheckPeople(String taskCheckPeople) {
+        this.taskCheckPeople = taskCheckPeople;
     }
 }
