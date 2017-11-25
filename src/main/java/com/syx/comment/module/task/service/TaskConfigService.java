@@ -57,5 +57,21 @@ public interface TaskConfigService {
      * @param taskDep
      * @return
      */
-    public List<SysTaskReleaseDepartment> saveTaskDepartmentInformation(String taskId, String taskDep);
+    List<SysTaskReleaseDepartment> saveTaskDepartmentInformation(String taskId, String taskDep);
+
+    /**
+     * 根据id删除所有的配置的信息
+     *
+     * @param taskConfigId
+     * @return JSONObject
+     */
+    JSONObject deleteTaskConfigInformation(String taskConfigId);
+
+    /**
+     * 根据id删除发布的任务
+     *
+     * @param taskId
+     * @return
+     */
+    JSONObject deleteTaskInformation(String taskId);
 }

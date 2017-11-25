@@ -2,13 +2,16 @@ package com.syx.comment.module.sys.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
 import com.syx.comment.entity.SysAreaPacket;
 import com.syx.comment.entity.SysPacket;
+import com.syx.comment.entity.SysRoleUser;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.PacketManageService;
 import com.syx.comment.repository.SysAreaPacketRepository;
 import com.syx.comment.repository.SysPacketRepository;
+import com.syx.comment.repository.SysRoleUserRepository;
 import com.syx.comment.repository.SysUserRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,9 @@ public class PacketManageServiceImpl implements PacketManageService {
     @Autowired
     SysAreaPacketRepository sysAreaPacketRepository;
 
+    @Autowired
+    SysRoleUserRepository sysRoleUserRepository;
+
     @Override
     public SysPacket savePacketInformation(SysPacket sysPacket, SysUser sysUser, String areaId) {
         // 添加默认值
@@ -52,10 +58,13 @@ public class PacketManageServiceImpl implements PacketManageService {
         sysUser.setUserCreateTime(new Date());
         sysUser.setUserRole(1);
         sysUserRepository.save(sysUser);
-        SysAreaPacket sysAreaPacket = new SysAreaPacket();
-        sysAreaPacket.setAreaId(Long.valueOf(areaId));
-        sysAreaPacket.setPacketId(sysPacketReturn.getId());
-        sysAreaPacketRepository.save(sysAreaPacket);
+        SysAreaPacket sysAreaPacket = sysAreaPacketRepository.findSysAreaByPacketId(sysPacketReturn.getId());
+        if (sysAreaPacket == null) {
+            sysAreaPacket = new SysAreaPacket();
+            sysAreaPacket.setAreaId(Long.valueOf(areaId));
+            sysAreaPacket.setPacketId(sysPacketReturn.getId());
+            sysAreaPacketRepository.save(sysAreaPacket);
+        }
         return sysPacketReturn;
     }
 
@@ -77,5 +86,32 @@ public class PacketManageServiceImpl implements PacketManageService {
         System.out.println(sql);
         JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sql));
         return jsonArray;
+    }
+
+    @Override
+    public JSONObject deletePacketInformation(String packetId) {
+        String[] packetIdS = packetId.split(",");
+        int packetIdSLen = packetIdS.length;
+        List<SysAreaPacket> listArea = new ArrayList<>();
+        List<SysPacket> listPacket = new ArrayList<>();
+        for (int i = 0; i < packetIdSLen; i++) {
+            Long id = Long.parseLong(packetIdS[i]);
+            SysAreaPacket sysAreaPacket = new SysAreaPacket();
+            SysAreaPacket sysAreaPacketData = sysAreaPacketRepository.findSysAreaByPacketId(id);
+            SysPacket sysPacket = new SysPacket();
+            sysAreaPacket.setId(sysAreaPacketData.getId());
+            sysPacket.setId(id);
+            listArea.add(sysAreaPacket);
+            listPacket.add(sysPacket);
+        }
+        JSONObject jsonObject = new JSONObject();
+        try {
+            sysPacketRepository.delete(listPacket);
+            sysAreaPacketRepository.delete(listArea);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            jsonObject.put("result", 0);
+        }
+        return jsonObject;
     }
 }

@@ -119,4 +119,36 @@ public class TaskConfigController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
         }
     }
+
+    @PostMapping(value = "/deleteTaskConfigInformation")
+    @ApiOperation(value = "deleteTaskConfigInformation", notes = "删除任务配置")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "taskConfigId", value = "任务配置的id", required = true, dataType = "STRING")
+    })
+    public ResponseEntity deleteTaskConfigInformation(@RequestParam("taskConfigId") String taskConfigId) {
+        try {
+            JSONObject jsonObject = taskConfigService.deleteTaskConfigInformation(taskConfigId);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @PostMapping(value = "/deleteTaskInformation")
+    @ApiOperation(value = "deleteTaskInformation", notes = "删除任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "taskId", value = "任务的id", required = true, dataType = "STRING")
+    })
+    public ResponseEntity deleteTaskInformation(@RequestParam("taskId") String taskConfigId) {
+        try {
+            JSONObject jsonObject = taskConfigService.deleteTaskInformation(taskConfigId);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.syx.comment.module.sys.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysPacket;
 import com.syx.comment.entity.SysUser;
 
@@ -29,5 +30,13 @@ public interface PacketManageService {
      * @return
      */
     JSONArray getPacketInformation(String areaId);
+
+    /**
+     * 删除系统
+     *
+     * @param packetId
+     * @return JSONObject
+     */
+    JSONObject deletePacketInformation(String packetId);
 
 }

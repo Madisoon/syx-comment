@@ -89,4 +89,36 @@ public class TaskConfigServiceImpl implements TaskConfigService {
         list = sysTaskReleaseDepartmentRepository.save(list);
         return list;
     }
+
+    @Override
+    public JSONObject deleteTaskConfigInformation(String taskConfigId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            sysTaskConfigRepository.delete(Long.parseLong(taskConfigId));
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            jsonObject.put("result", 0);
+        }
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject deleteTaskInformation(String taskId) {
+        String[] taskIdS = taskId.split(",");
+        int taskIdSLen = taskIdS.length;
+        List<SysTaskRelease> list = new ArrayList<>();
+        for (int i = 0; i < taskIdSLen; i++) {
+            SysTaskRelease sysTaskRelease = new SysTaskRelease();
+            sysTaskRelease.setId(Long.parseLong(taskIdS[i]));
+            list.add(sysTaskRelease);
+        }
+        JSONObject jsonObject = new JSONObject();
+        try {
+            sysTaskReleaseRepository.delete(list);
+            jsonObject.put("result", 1);
+        } catch (Exception e) {
+            jsonObject.put("result", 0);
+        }
+        return jsonObject;
+    }
 }

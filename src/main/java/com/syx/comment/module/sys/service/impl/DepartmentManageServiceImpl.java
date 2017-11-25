@@ -46,10 +46,10 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
 
     @Override
     public JSONArray getDepartmentInformation(String depPacketNo) {
-        String sql = "SELECT a.id ,a.dep_no AS depNo,a.dep_name AS depName,b.user_name AS userName," +
-                "b.user_pwd AS userPwd,b.id AS userId  " +
-                "FROM sys_department a, sys_user b " +
-                "WHERE a.dep_packet_no = ? AND a.dep_no = b.user_dep AND b.user_role = '3'";
+        String sql = " SELECT a.id ,a.dep_no AS depNo,a.dep_name AS depName,b.user_name AS userName,  " +
+                     " b.user_pwd AS userPwd,b.id AS userId  " +
+                     "FROM sys_department a LEFT JOIN sys_user b ON  a.dep_no = b.user_dep " +
+                     "WHERE a.dep_packet_no = ? AND a.dep_no = b.user_dep AND b.user_role = '3' ";
         JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sql, new String[]{depPacketNo}));
         return jsonArray;
     }

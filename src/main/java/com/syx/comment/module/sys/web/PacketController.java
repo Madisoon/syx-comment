@@ -2,6 +2,7 @@ package com.syx.comment.module.sys.web;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysPacket;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.impl.PacketManageServiceImpl;
@@ -58,6 +59,22 @@ public class PacketController {
         try {
             JSONArray jsonArray = packetManageService.getPacketInformation(areaId);
             return ResponseEntity.ok().body(jsonArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @PostMapping(value = "/deletePacketInformation")
+    @ApiOperation(value = "deletePacketInformation", notes = "删除系统")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "packetId", value = "需要删除系统的id", required = true, dataType = "STRING")
+    })
+    public ResponseEntity deletePacketInformation(@RequestParam("packetId") String packetId) {
+        try {
+            JSONObject jsonObject = packetManageService.deletePacketInformation(packetId);
+            return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
             ExecResult er = new ExecResult(false, e.getMessage());
