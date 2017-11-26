@@ -119,7 +119,7 @@ public class TaskPostController {
             @ApiImplicitParam(name = "userName", value = "审核人账号", required = true, dataType = "STRING")
     })
     public ResponseEntity saveTaskFinishInformationPart(@RequestParam("taskPostInfo") String taskPostInfo,
-                                                      @RequestParam("userName") String userName) {
+                                                        @RequestParam("userName") String userName) {
         try {
             SysTaskFinish sysTaskFinish = JSON.parseObject(taskPostInfo, SysTaskFinish.class);
             sysTaskFinish = taskPostService.saveTaskFinishInformationPart(sysTaskFinish, userName);
@@ -143,5 +143,27 @@ public class TaskPostController {
             return str + file.getOriginalFilename();
         }
         return "";
+    }
+
+    @GetMapping(value = "/getTaskRankInformation")
+    @ApiOperation(value = "getTaskRankInformation", notes = "获取排名")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sysPacketNo", value = "系统编号", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "rankType", value = "排名的类型", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "pageSize", value = "第几页", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "pageNumber", value = "每页数量", required = true, dataType = "STRING")
+    })
+    public ResponseEntity getTaskRankInformation(@RequestParam("sysPacketNo") String sysPacketNo,
+                                                 @RequestParam("rankType") String rankType,
+                                                 @RequestParam("pageSize") String pageSize,
+                                                 @RequestParam("pageNumber") String pageNumber) {
+        try {
+            JSONObject jsonObject = taskPostService.getTaskRankInformation(sysPacketNo, rankType, pageSize, pageNumber);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
     }
 }

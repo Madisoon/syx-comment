@@ -1,5 +1,6 @@
 package com.syx.comment.module.task.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysTaskFinish;
 
@@ -54,7 +55,19 @@ public interface TaskPostService {
      * 管理发布任务的信息
      *
      * @param sysTaskFinish
+     * @param userName
      * @return
      */
     SysTaskFinish saveTaskFinishInformationPart(SysTaskFinish sysTaskFinish, String userName);
+
+    /**
+     * 根据系统得到分类的排名
+     *
+     * @param taskPacketNo
+     * @param rankType
+     * @return
+     */
+    JSONObject getTaskRankInformation(String taskPacketNo, String rankType, String pageSize, String pageNumber);
+
+
 }

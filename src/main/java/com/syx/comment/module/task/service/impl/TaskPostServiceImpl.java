@@ -8,7 +8,9 @@ import com.syx.comment.entity.SysTaskFinish;
 import com.syx.comment.module.task.service.TaskPostService;
 import com.syx.comment.repository.SysTaskFinishRepository;
 import com.syx.comment.utils.SqlEasy;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.Kernel;
@@ -115,5 +117,37 @@ public class TaskPostServiceImpl implements TaskPostService {
             sysTaskFinishData.setTaskCheckTime(new Date());
         }
         return sysTaskFinishRepository.save(sysTaskFinishData);
+    }
+
+    @Override
+    public JSONObject getTaskRankInformation(String taskPacketNo, String rankType, String pageSize, String pageNumber) {
+        List<String> list = new ArrayList<>(16);
+        list.add("SELECT a.*,b.user_nick_name,c.dep_name, d.task_config_name,SUM(a.task_mark) AS total_number ");
+        list.add("FROM sys_task_finish a ,sys_user b ,sys_department c ,sys_task_config d ");
+        list.add("WHERE a.task_creater = b.user_name AND b.user_dep = c.dep_no AND a.task_type = d.id ");
+        list.add("AND a.task_packet_no = ? ");
+        switch (rankType) {
+            case "1":
+                list.add(" GROUP BY a.task_creater ");
+                break;
+            case "2":
+                list.add(" GROUP BY b.user_dep ");
+                break;
+            case "3":
+                list.add(" GROUP BY a.task_type ");
+                break;
+            default:
+                list.add("");
+                break;
+        }
+        list.add(" ORDER BY total_number DESC ");
+        String sqlTotal = StringUtils.join(list, "");
+        String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
+        List<Map<String, String>> listTotal = baseDao.rawQuery(sqlTotal, new String[]{taskPacketNo});
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{taskPacketNo}));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("total", listTotal.size());
+        jsonObject.put("data", jsonArray);
+        return jsonObject;
     }
 }
