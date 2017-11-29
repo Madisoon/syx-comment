@@ -36,9 +36,10 @@ public interface TaskConfigService {
      * 更新发布任务的内容
      *
      * @param sysTaskRelease
+     * @param taskDep
      * @return
      */
-    SysTaskRelease saveTaskReleaseInformation(SysTaskRelease sysTaskRelease);
+    SysTaskRelease saveTaskReleaseInformation(SysTaskRelease sysTaskRelease, String taskDep);
 
     /**
      * 分页得到任务的信息
@@ -74,4 +75,13 @@ public interface TaskConfigService {
      * @return
      */
     JSONObject deleteTaskInformation(String taskId);
+
+    /**
+     *根据系统编号和部门编号获取所有的通知
+     *
+     * @param sysPacketNo
+     * @param depNo
+     * @return
+     */
+    JSONArray getAllNoteInformation(String sysPacketNo, String depNo);
 }

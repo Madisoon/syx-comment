@@ -20,7 +20,7 @@ public class SysRoleUser {
     private Long roleId;
 
     @Column(name = "user_id")
-    private String user_id;
+    private String userId;
 
     public Long getId() {
         return id;
@@ -38,11 +38,11 @@ public class SysRoleUser {
         this.roleId = roleId;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

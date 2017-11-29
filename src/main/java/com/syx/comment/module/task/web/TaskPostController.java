@@ -95,15 +95,22 @@ public class TaskPostController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sysPacketNo", value = "系统编号", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "taskStatus", value = "任务状态", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "searchData", value = "筛选条件", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageSize", value = "第几页", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageNumber", value = "每页数量", required = true, dataType = "STRING")
     })
     public ResponseEntity getPacketTaskInformation(@RequestParam("sysPacketNo") String sysPacketNo,
                                                    @RequestParam("taskStatus") String taskStatus,
+                                                   @RequestParam("searchData") String searchData,
                                                    @RequestParam("pageSize") String pageSize,
                                                    @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONObject jsonObject = taskPostService.getPacketInformation(sysPacketNo, taskStatus, pageSize, pageNumber);
+            JSONObject jsonObject = new JSONObject();
+            if ("{}".equals(searchData)) {
+                jsonObject = taskPostService.getPacketInformation(sysPacketNo, taskStatus, pageSize, pageNumber);
+            } else {
+                jsonObject = taskPostService.getTaskChooseInformation(sysPacketNo, searchData, pageSize, pageNumber);
+            }
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,15 +157,17 @@ public class TaskPostController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sysPacketNo", value = "系统编号", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "rankType", value = "排名的类型", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "searchData", value = "搜索的排序", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageSize", value = "第几页", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageNumber", value = "每页数量", required = true, dataType = "STRING")
     })
     public ResponseEntity getTaskRankInformation(@RequestParam("sysPacketNo") String sysPacketNo,
                                                  @RequestParam("rankType") String rankType,
+                                                 @RequestParam("searchData") String searchData,
                                                  @RequestParam("pageSize") String pageSize,
                                                  @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONObject jsonObject = taskPostService.getTaskRankInformation(sysPacketNo, rankType, pageSize, pageNumber);
+            JSONObject jsonObject = taskPostService.getTaskRankInformation(sysPacketNo, rankType, searchData, pageSize, pageNumber);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();

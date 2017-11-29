@@ -29,9 +29,6 @@ public class SysUser {
     @Column(name = "user_pwd")
     private String userPwd;
 
-    @Column(name = "user_role")
-    private int userRole;
-
     @Column(name = "user_dep")
     private int userDep;
 
@@ -79,14 +76,6 @@ public class SysUser {
 
     public void setUserPwd(String userPwd) {
         this.userPwd = userPwd;
-    }
-
-    public int getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(int userRole) {
-        this.userRole = userRole;
     }
 
     public int getUserDep() {

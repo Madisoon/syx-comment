@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.fantasi.common.db.dao.BaseDao;
 import com.syx.comment.entity.SysDepartment;
+import com.syx.comment.entity.SysRoleUser;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.DepartmentManageService;
 import com.syx.comment.repository.SysDepartmentRepository;
+import com.syx.comment.repository.SysRoleUserRepository;
 import com.syx.comment.repository.SysUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,9 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     SysUserRepository sysUserRepository;
 
     @Autowired
+    SysRoleUserRepository sysRoleUserRepository;
+
+    @Autowired
     BaseDao baseDao;
 
     @Override
@@ -39,17 +44,24 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
         SysDepartment sysDepartmentReturn = sysDepartmentRepository.save(sysDepartment);
         sysUser.setUserNickName("admin");
         sysUser.setUserCreateTime(new Date());
-        sysUser.setUserRole(3);
         sysUserRepository.save(sysUser);
+        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserId(sysUser.getUserName());
+        if (sysRoleUser == null) {
+            sysRoleUser = new SysRoleUser();
+            sysRoleUser.setRoleId(Long.parseLong("3"));
+            sysRoleUser.setUserId(sysUser.getUserName());
+            sysRoleUserRepository.save(sysRoleUser);
+        }
         return sysDepartmentReturn;
     }
 
     @Override
     public JSONArray getDepartmentInformation(String depPacketNo) {
         String sql = " SELECT a.id ,a.dep_no AS depNo,a.dep_name AS depName,b.user_name AS userName,  " +
-                " b.user_pwd AS userPwd,b.id AS userId  " +
-                "FROM sys_department a LEFT JOIN sys_user b ON  a.dep_no = b.user_dep " +
-                "WHERE a.dep_packet_no = ? AND a.dep_no = b.user_dep AND b.user_role = '3' ";
+                "b.user_pwd AS userPwd,b.id AS userId  " +
+                "FROM sys_department a LEFT JOIN sys_user b ON  a.dep_no = b.user_dep  " +
+                "LEFT JOIN sys_role_user c ON b.user_name=c.user_id " +
+                "WHERE a.dep_packet_no = ? AND a.dep_no = b.user_dep  AND c.role_id = '3'";
         JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sql, new String[]{depPacketNo}));
         return jsonArray;
     }

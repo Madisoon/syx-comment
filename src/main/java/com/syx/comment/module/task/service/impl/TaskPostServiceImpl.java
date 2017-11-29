@@ -14,10 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.awt.image.Kernel;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 描述:
@@ -120,34 +117,108 @@ public class TaskPostServiceImpl implements TaskPostService {
     }
 
     @Override
-    public JSONObject getTaskRankInformation(String taskPacketNo, String rankType, String pageSize, String pageNumber) {
+    public JSONObject getTaskRankInformation(String taskPacketNo, String rankType, String searchData, String pageSize, String pageNumber) {
         List<String> list = new ArrayList<>(16);
-        list.add("SELECT a.*,b.user_nick_name,c.dep_name, d.task_config_name,SUM(a.task_mark) AS total_number ");
-        list.add("FROM sys_task_finish a ,sys_user b ,sys_department c ,sys_task_config d ");
-        list.add("WHERE a.task_creater = b.user_name AND b.user_dep = c.dep_no AND a.task_type = d.id ");
-        list.add("AND a.task_packet_no = ? ");
-        switch (rankType) {
-            case "1":
-                list.add(" GROUP BY a.task_creater ");
-                break;
-            case "2":
-                list.add(" GROUP BY b.user_dep ");
-                break;
-            case "3":
-                list.add(" GROUP BY a.task_type ");
-                break;
-            default:
-                list.add("");
-                break;
+        if ("{}".equals(searchData)) {
+            list.add("SELECT a.*,b.user_nick_name,c.dep_name, d.task_config_name,SUM(a.task_mark) AS total_number ");
+            list.add("FROM sys_task_finish a ,sys_user b ,sys_department c ,sys_task_config d ");
+            list.add("WHERE a.task_creater = b.user_name AND b.user_dep = c.dep_no AND a.task_type = d.id AND a.task_status = '2' ");
+            list.add("AND a.task_packet_no = ? ");
+            switch (rankType) {
+                case "1":
+                    list.add(" GROUP BY b.user_dep ");
+                    break;
+                case "2":
+                    list.add(" GROUP BY a.task_creater  ");
+                    break;
+                case "3":
+                    list.add(" GROUP BY a.task_type ");
+                    break;
+                default:
+                    list.add("");
+                    break;
+            }
+            list.add(" ORDER BY total_number DESC ");
+            String sqlTotal = StringUtils.join(list, "");
+            String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
+            List<Map<String, String>> listTotal = baseDao.rawQuery(sqlTotal, new String[]{taskPacketNo});
+            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{taskPacketNo}));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("total", listTotal.size());
+            jsonObject.put("data", jsonArray);
+            return jsonObject;
+        } else {
+            JSONObject jsonObject = JSON.parseObject(searchData);
+            String sqlChoose = "SELECT a.id, a.user_nick_name,a.dep_name, a.task_config_name,SUM(a.task_mark) AS total_number FROM (SELECT a.*,b.user_nick_name,b.user_dep,c.dep_name,d.task_config_name FROM sys_task_finish a ,sys_user b ," +
+                    "sys_department c ,sys_task_config d   " +
+                    "WHERE a.task_creater = b.user_name AND b.user_dep = c.dep_no AND a.task_type = d.id ) a  " +
+                    "WHERE a.task_status ='2' AND a.task_packet_no = '" + taskPacketNo + "' ";
+            Set set = jsonObject.keySet();
+            Iterator<String> iterator = set.iterator();
+            while (iterator.hasNext()) {
+                String value = iterator.next();
+                if ("startTime".equals(value)) {
+                    sqlChoose += " AND a.task_create_time > '" + jsonObject.getString(value) + "' ";
+                } else if ("endTime".equals(value)) {
+                    sqlChoose += " AND a.task_create_time < '" + jsonObject.getString(value) + "' ";
+                } else {
+                    sqlChoose += " AND a." + value + " LIKE '%" + jsonObject.getString(value) + "%' ";
+                }
+            }
+            switch (rankType) {
+                case "1":
+                    sqlChoose += " GROUP BY a.task_creater ";
+                    break;
+                case "2":
+                    sqlChoose += " GROUP BY a.user_dep ";
+                    break;
+                case "3":
+                    sqlChoose += " GROUP BY a.task_type ";
+                    break;
+                default:
+                    sqlChoose += "";
+                    break;
+            }
+            list.add(" ORDER BY total_number DESC ");
+            String sqlPage = sqlChoose + SqlEasy.limitPage(pageSize, pageNumber);
+            List<Map<String, String>> listTotal = baseDao.rawQuery(sqlChoose, null);
+            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, null));
+            JSONObject jsonObjectData = new JSONObject();
+            jsonObjectData.put("total", listTotal.size());
+            jsonObjectData.put("data", jsonArray);
+            return jsonObjectData;
         }
-        list.add(" ORDER BY total_number DESC ");
-        String sqlTotal = StringUtils.join(list, "");
-        String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
-        List<Map<String, String>> listTotal = baseDao.rawQuery(sqlTotal, new String[]{taskPacketNo});
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{taskPacketNo}));
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", listTotal.size());
-        jsonObject.put("data", jsonArray);
-        return jsonObject;
+    }
+
+    @Override
+    public JSONObject getTaskChooseInformation(String sysPacketNo, String searchData, String pageSize, String pageNumber) {
+        JSONObject jsonObject = JSON.parseObject(searchData);
+        String checkTime = jsonObject.getString("checkTime");
+        String postTime = jsonObject.getString("postTime");
+        jsonObject.remove("checkTime");
+        jsonObject.remove("postTime");
+        String sqlChoose = "SELECT * FROM (SELECT a.*,b.user_nick_name,b.user_dep,c.dep_name,d.task_config_name FROM sys_task_finish a ,sys_user b ," +
+                "sys_department c ,sys_task_config d   " +
+                "WHERE a.task_creater = b.user_name AND b.user_dep = c.dep_no AND a.task_type = d.id ) a  " +
+                "WHERE a.task_status ='2' AND a.task_packet_no = '" + sysPacketNo + "' ";
+        Set set = jsonObject.keySet();
+        Iterator<String> iterator = set.iterator();
+        while (iterator.hasNext()) {
+            String value = iterator.next();
+            if ("startTime".equals(value)) {
+                sqlChoose += " AND a.task_create_time > '" + jsonObject.getString(value) + "' ";
+            } else if ("endTime".equals(value)) {
+                sqlChoose += " AND a.task_create_time < '" + jsonObject.getString(value) + "' ";
+            } else {
+                sqlChoose += " AND a." + value + " LIKE '%" + jsonObject.getString(value) + "%' ";
+            }
+        }
+        String sqlPage = sqlChoose + SqlEasy.limitPage(pageSize, pageNumber);
+        List<Map<String, String>> listTotal = baseDao.rawQuery(sqlChoose, null);
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, null));
+        JSONObject jsonObjectData = new JSONObject();
+        jsonObjectData.put("total", listTotal.size());
+        jsonObjectData.put("data", jsonArray);
+        return jsonObjectData;
     }
 }

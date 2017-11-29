@@ -54,15 +54,30 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public SysTaskRelease saveTaskReleaseInformation(SysTaskRelease sysTaskRelease) {
+    public SysTaskRelease saveTaskReleaseInformation(SysTaskRelease sysTaskRelease, String taskDep) {
         sysTaskRelease.setTaskCreateTime(new Date());
-        return sysTaskReleaseRepository.save(sysTaskRelease);
+        sysTaskRelease = sysTaskReleaseRepository.save(sysTaskRelease);
+        Long taskReleaseId = sysTaskRelease.getId();
+        String sqlDelete = "DELETE FROM sys_task_release_department WHERE task_release_id = ?";
+        baseDao.execute(sqlDelete, new String[]{String.valueOf(taskReleaseId)});
+        if (!"".equals(taskDep)) {
+            String[] taskDepS = taskDep.split(",");
+            int taskDepSLen = taskDepS.length;
+            for (int i = 0; i < taskDepSLen; i++) {
+                String depNo = taskDepS[i];
+                SysTaskReleaseDepartment sysTaskReleaseDepartment = new SysTaskReleaseDepartment();
+                sysTaskReleaseDepartment.setDepNo(Long.parseLong(depNo));
+                sysTaskReleaseDepartment.setTaskReleaseId(taskReleaseId);
+                sysTaskReleaseDepartmentRepository.save(sysTaskReleaseDepartment);
+            }
+        }
+        return sysTaskRelease;
     }
 
     @Override
     public JSONObject getTaskReleaseInformation(String id, String pageNumber, String pageSize) {
         String selectSqlTotal = "SELECT * FROM sys_task_release a WHERE a.task_config_id = '" + id + "' ";
-        String selectSql = "SELECT a.*,COUNT(b.id) AS dep_number,GROUP_CONCAT(b.dep_no) FROM " +
+        String selectSql = "SELECT a.*,COUNT(b.id) AS dep_number,GROUP_CONCAT(b.dep_no) as dep_nos FROM " +
                 "(SELECT * FROM sys_task_release a WHERE a.task_config_id = '" + id + "'  " +
                 "ORDER BY a.task_create_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ) a " +
                 "LEFT JOIN sys_task_release_department b ON a.id = b.task_release_id GROUP BY a.id ";
@@ -120,5 +135,16 @@ public class TaskConfigServiceImpl implements TaskConfigService {
             jsonObject.put("result", 0);
         }
         return jsonObject;
+    }
+
+    @Override
+    public JSONArray getAllNoteInformation(String sysPacketNo, String depNo) {
+        String sqlSelect = "SELECT a.*,c.task_config_name FROM sys_task_release a,  " +
+                "sys_task_release_department b,sys_task_config c " +
+                "WHERE a.id = b.task_release_id AND a.task_config_id = c.id  " +
+                "AND a.task_packet_no = ?  " +
+                "AND b.dep_no = ? ORDER BY a.task_create_time DESC";
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, depNo}));
+        return jsonArray;
     }
 }

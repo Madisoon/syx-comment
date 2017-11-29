@@ -1,6 +1,7 @@
 package com.syx.comment.module.task.web;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysTaskConfig;
 import com.syx.comment.entity.SysTaskRelease;
@@ -68,12 +69,14 @@ public class TaskConfigController {
     @PutMapping(value = "/saveTaskReleaseInformation")
     @ApiOperation(value = "saveTaskReleaseInformation", notes = "发布任务")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "taskInfo", value = "任务信息", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "taskInfo", value = "任务信息", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "taskDep", value = "部门的一些信息", required = true, dataType = "STRING")
     })
-    public ResponseEntity saveTaskReleaseInformation(@RequestParam("taskInfo") String taskInfo) {
+    public ResponseEntity saveTaskReleaseInformation(@RequestParam("taskInfo") String taskInfo,
+                                                     @RequestParam("taskDep") String taskDep) {
         try {
             SysTaskRelease sysTaskRelease = JSON.parseObject(taskInfo, SysTaskRelease.class);
-            sysTaskRelease = taskConfigService.saveTaskReleaseInformation(sysTaskRelease);
+            sysTaskRelease = taskConfigService.saveTaskReleaseInformation(sysTaskRelease, taskDep);
             return ResponseEntity.ok().body(sysTaskRelease);
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,6 +148,24 @@ public class TaskConfigController {
         try {
             JSONObject jsonObject = taskConfigService.deleteTaskInformation(taskConfigId);
             return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @GetMapping(value = "/getAllNoteInformation")
+    @ApiOperation(value = "getAllNoteInformation", notes = "删除任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sysPacketNo", value = "系统的数据包编码", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "depNo", value = "部门编码", required = true, dataType = "STRING")
+    })
+    public ResponseEntity getAllNoteInformation(@RequestParam("sysPacketNo") String sysPacketNo,
+                                                @RequestParam("depNo") String depNo) {
+        try {
+            JSONArray jsonArray = taskConfigService.getAllNoteInformation(sysPacketNo, depNo);
+            return ResponseEntity.ok().body(jsonArray);
         } catch (Exception e) {
             e.printStackTrace();
             ExecResult er = new ExecResult(false, e.getMessage());
