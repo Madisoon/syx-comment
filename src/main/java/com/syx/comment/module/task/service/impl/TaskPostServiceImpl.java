@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.awt.image.Kernel;
 import java.util.*;
 
@@ -30,6 +32,10 @@ public class TaskPostServiceImpl implements TaskPostService {
 
     @Autowired
     BaseDao baseDao;
+
+    // jpa 使用原生sql语句
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public SysTaskFinish saveTaskFinishInformation(SysTaskFinish sysTaskFinish) {

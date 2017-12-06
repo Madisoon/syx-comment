@@ -35,7 +35,7 @@ public interface UserManageService {
      * @param sysUser
      * @return SysUser
      */
-    SysUser saveUserInformation(SysUser sysUser);
+    SysUser saveUserInformation(SysUser sysUser, String roleType);
 
     /**
      * 根据id删除用户
@@ -46,10 +46,13 @@ public interface UserManageService {
     JSONObject deleteUserInformation(String userId);
 
     /**
-     * 根据部门获取用户
-     *
+     * 根据角色和部门获取用户
+     * @param roleType
+     * @param sysPacketNo
      * @param depNo
-     * @return
+     * @param pageSize
+     * @param pageNumber
+     * @return JSONObject
      */
-    JSONObject getUserInformationByDep(String depNo, String pageSize, String pageNumber);
+    JSONObject getUserInformationByDep(String roleType, String sysPacketNo, String depNo, String pageSize, String pageNumber);
 }

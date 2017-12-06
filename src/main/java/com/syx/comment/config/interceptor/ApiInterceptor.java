@@ -16,7 +16,6 @@ public class ApiInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         /*// 开始请求拦截，只有返回true，才会往下面进行
         String webToken = request.getHeader("webToken");
-        System.out.println("到这表了");
         if (request.getHeader("webToken") == null) {
             return false;
         } else {

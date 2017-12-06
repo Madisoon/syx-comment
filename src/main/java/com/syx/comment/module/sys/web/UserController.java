@@ -63,12 +63,14 @@ public class UserController {
     @ApiOperation(value = "saveUserInformation", notes = "新建用户信息")
     @PutMapping(value = "/saveUserInformation")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "userInfo", value = "用户信息", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "userInfo", value = "用户信息", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "roleType", value = "人员的信息", required = true, dataType = "STRING")
     })
-    public ResponseEntity saveUserInformation(@RequestParam("userInfo") String userInfo) {
+    public ResponseEntity saveUserInformation(@RequestParam("userInfo") String userInfo,
+                                              @RequestParam("roleType") String roleType) {
         try {
             SysUser sysUser = JSON.parseObject(userInfo, SysUser.class);
-            sysUser = userManageService.saveUserInformation(sysUser);
+            sysUser = userManageService.saveUserInformation(sysUser, roleType);
             return ResponseEntity.ok().body(sysUser);
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,15 +98,19 @@ public class UserController {
     @ApiOperation(value = "getUserInformationByDep", notes = "得到用户的个人信息")
     @GetMapping(value = "/getUserInformationByDep")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "roleType", value = "角色", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "sysPacketNo", value = "系统编号", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "depNo", value = "任务状态", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageSize", value = "第几页", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageNumber", value = "每页数量", required = true, dataType = "STRING")
     })
-    public ResponseEntity getUserInformationByDep(@RequestParam("depNo") String depNo,
+    public ResponseEntity getUserInformationByDep(@RequestParam("roleType") String roleType,
+                                                  @RequestParam("sysPacketNo") String sysPacketNo,
+                                                  @RequestParam("depNo") String depNo,
                                                   @RequestParam("pageSize") String pageSize,
                                                   @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONObject jsonObject = userManageService.getUserInformationByDep(depNo, pageSize, pageNumber);
+            JSONObject jsonObject = userManageService.getUserInformationByDep(roleType, sysPacketNo, depNo, pageSize, pageNumber);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();

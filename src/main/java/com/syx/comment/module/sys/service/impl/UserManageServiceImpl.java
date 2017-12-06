@@ -5,8 +5,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
 import com.syx.comment.config.JwtConfig;
+import com.syx.comment.entity.SysRoleUser;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.UserManageService;
+import com.syx.comment.repository.SysRoleUserRepository;
 import com.syx.comment.repository.SysUserRepository;
 import com.syx.comment.utils.SqlEasy;
 import org.apache.commons.lang3.StringUtils;
@@ -28,11 +30,20 @@ import java.util.Map;
 
 @Service
 public class UserManageServiceImpl implements UserManageService {
+
+    /**
+     * 新建用户的类型,1代表是普通用户,0代表是审核人员
+     */
+    public final String ROLE_TYPE = "1";
+
     @Autowired
     SysUserRepository sysUserRepository;
 
     @Autowired
     JwtConfig jwtConfig;
+
+    @Autowired
+    SysRoleUserRepository sysRoleUserRepository;
 
     @Autowired
     BaseDao baseDao;
@@ -46,7 +57,13 @@ public class UserManageServiceImpl implements UserManageService {
         } else {
             if (userPassword.equals(sysUser.getUserPwd())) {
                 jsonObject.put("result", 1);
-                jsonObject.put("user", sysUser);
+                String sql = "SELECT a.user_name AS userName, a.user_nick_name AS userNickName, a.user_phone AS userPhone, " +
+                        "a.user_dep AS userDep, a.user_packet_no AS userPacketNo,b.id,b.role_name " +
+                        "AS roleName FROM sys_user a ,sys_role b ,sys_role_user c  " +
+                        "WHERE a.user_name = c.user_id AND b.id = c.role_id " +
+                        "AND a.user_name = ? ";
+                JSONObject jsonObjectUser = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(sql, new String[]{userName}));
+                jsonObject.put("user", jsonObjectUser);
             } else {
                 jsonObject.put("result", 0);
             }
@@ -97,8 +114,19 @@ public class UserManageServiceImpl implements UserManageService {
     }
 
     @Override
-    public SysUser saveUserInformation(SysUser sysUser) {
+    public SysUser saveUserInformation(SysUser sysUser, String roleType) {
         sysUser.setUserCreateTime(new Date());
+        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserId(sysUser.getUserName());
+        if (sysRoleUser == null) {
+            sysRoleUser = new SysRoleUser();
+            if (ROLE_TYPE.equals(roleType)) {
+                sysRoleUser.setRoleId(Long.parseLong("4"));
+            } else {
+                sysRoleUser.setRoleId(Long.parseLong("5"));
+            }
+            sysRoleUser.setUserId(sysUser.getUserName());
+            sysRoleUserRepository.save(sysRoleUser);
+        }
         return sysUserRepository.save(sysUser);
     }
 
@@ -123,14 +151,26 @@ public class UserManageServiceImpl implements UserManageService {
     }
 
     @Override
-    public JSONObject getUserInformationByDep(String depNo, String pageSize, String pageNumber) {
-        String sqlTotal = "SELECT * FROM sys_user a WHERE a.user_dep = ? ORDER BY a.user_create_time DESC ";
-        String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
-        List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo});
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
+    public JSONObject getUserInformationByDep(String roleType, String sysPacketNo, String depNo, String pageSize, String pageNumber) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", list.size());
-        jsonObject.put("data", jsonArray);
+        if (ROLE_TYPE.equals(roleType)) {
+            String sqlTotal = "SELECT * FROM sys_user a WHERE a.user_dep = ? ORDER BY a.user_create_time DESC ";
+            String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
+            List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo});
+            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
+            jsonObject.put("total", list.size());
+            jsonObject.put("data", jsonArray);
+        } else {
+            String sqlTotal = "SELECT * FROM sys_user a, sys_role_user b  " +
+                    "WHERE a.user_packet_no = ?   " +
+                    "AND a.user_name = b.user_id AND b.role_id = '5' " +
+                    "ORDER BY a.user_create_time DESC ";
+            String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
+            List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo});
+            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{sysPacketNo}));
+            jsonObject.put("total", list.size());
+            jsonObject.put("data", jsonArray);
+        }
         return jsonObject;
     }
 }
