@@ -49,7 +49,7 @@ public interface TaskConfigService {
      * @param pageSize
      * @return
      */
-    JSONObject getTaskReleaseInformation(String id, String pageNumber, String pageSize);
+    JSONObject getTaskReleaseInformation(String pageNumber, String pageSize);
 
     /**
      * 保存任务适用部门的信息

@@ -106,15 +106,13 @@ public class TaskConfigController {
     @GetMapping(value = "/getTaskReleaseInformation")
     @ApiOperation(value = "getTaskReleaseInformation", notes = "发布任务")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "taskConfigId", value = "任务配置的id", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageSize", value = "每一页的大小", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageNumber", value = "页数", required = true, dataType = "STRING")
     })
-    public ResponseEntity getTaskReleaseInformation(@RequestParam("taskConfigId") String taskConfigId,
-                                                    @RequestParam("pageSize") String pageSize,
+    public ResponseEntity getTaskReleaseInformation(@RequestParam("pageSize") String pageSize,
                                                     @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONObject jsonObject = taskConfigService.getTaskReleaseInformation(taskConfigId, pageNumber, pageSize);
+            JSONObject jsonObject = taskConfigService.getTaskReleaseInformation(pageNumber, pageSize);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();

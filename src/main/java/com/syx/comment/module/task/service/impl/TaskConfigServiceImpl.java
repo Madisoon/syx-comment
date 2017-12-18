@@ -75,10 +75,10 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public JSONObject getTaskReleaseInformation(String id, String pageNumber, String pageSize) {
-        String selectSqlTotal = "SELECT * FROM sys_task_release a WHERE a.task_config_id = '" + id + "' ";
+    public JSONObject getTaskReleaseInformation(String pageNumber, String pageSize) {
+        String selectSqlTotal = "SELECT * FROM sys_task_release a ";
         String selectSql = "SELECT a.*,COUNT(b.id) AS dep_number,GROUP_CONCAT(b.dep_no) as dep_nos FROM " +
-                "(SELECT * FROM sys_task_release a WHERE a.task_config_id = '" + id + "'  " +
+                "(SELECT * FROM sys_task_release a  " +
                 "ORDER BY a.task_create_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ) a " +
                 "LEFT JOIN sys_task_release_department b ON a.id = b.task_release_id GROUP BY a.id ";
         List<Map<String, String>> listTotal = baseDao.rawQuery(selectSqlTotal);
