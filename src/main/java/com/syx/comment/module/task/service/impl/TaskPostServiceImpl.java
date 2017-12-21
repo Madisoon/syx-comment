@@ -64,17 +64,42 @@ public class TaskPostServiceImpl implements TaskPostService {
     }
 
     @Override
-    public JSONObject getDepTaskInformation(String depNo, String pageSize, String pageNumber) {
-
-        String sqlTotal = " SELECT a.*,c.task_config_name FROM sys_task_finish a , sys_user b ,sys_task_config c " +
-                " WHERE a.task_creater = b.user_name AND b.user_dep = ? AND a.task_type = c.id AND c.task_status = '1' " +
-                "ORDER BY a.task_create_time DESC ";
-        String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
-        List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo});
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
+    public JSONObject getDepTaskInformation(String depNo, String searchData, String pageSize, String pageNumber) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", list.size());
-        jsonObject.put("data", jsonArray);
+        if ("{}".equals(searchData)) {
+            String sqlTotal = " SELECT a.*,c.task_config_name FROM sys_task_finish a , sys_user b ,sys_task_config c " +
+                    " WHERE a.task_creater = b.user_name AND b.user_dep = ? AND a.task_type = c.id AND c.task_status = '1' " +
+                    "ORDER BY a.task_create_time DESC ";
+            String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
+            List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo});
+            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
+            jsonObject.put("total", list.size());
+            jsonObject.put("data", jsonArray);
+        } else {
+            JSONObject jsonObjectData = JSON.parseObject(searchData);
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append("SELECT a.*,c.task_config_name FROM sys_task_finish a , sys_user b ,sys_task_config c " +
+                    " WHERE a.task_creater = b.user_name AND b.user_dep = ? AND a.task_type = c.id AND c.task_status = '1' ");
+            Set set = jsonObjectData.keySet();
+            Iterator<String> iterator = set.iterator();
+            while (iterator.hasNext()) {
+                String value = iterator.next();
+                if ("startTime".equals(value)) {
+                    stringBuffer.append(" AND a.task_create_time > '" + jsonObjectData.getString(value) + "' ");
+                } else if ("endTime".equals(value)) {
+                    stringBuffer.append(" AND a.task_create_time < '" + jsonObjectData.getString(value) + "' ");
+                } else {
+                    stringBuffer.append(" AND a." + value + " LIKE '%" + jsonObjectData.getString(value) + "%' ");
+                }
+            }
+            stringBuffer.append("ORDER BY a.task_create_time DESC");
+            System.out.println(stringBuffer.toString());
+            String sqlPage = stringBuffer.toString() + SqlEasy.limitPage(pageSize, pageNumber);
+            List<Map<String, String>> list = baseDao.rawQuery(stringBuffer.toString(), new String[]{depNo});
+            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
+            jsonObject.put("total", list.size());
+            jsonObject.put("data", jsonArray);
+        }
         return jsonObject;
     }
 

@@ -74,14 +74,16 @@ public class TaskPostController {
     @ApiOperation(value = "getDepTaskInformation", notes = "发布任务配置")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "depNo", value = "部门编号", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "searchData", value = "部门编号", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageSize", value = "第几页", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageNumber", value = "每页数量", required = true, dataType = "STRING")
     })
     public ResponseEntity getDepTaskInformation(@RequestParam("depNo") String depNo,
+                                                @RequestParam("searchData") String searchData,
                                                 @RequestParam("pageSize") String pageSize,
                                                 @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONObject jsonObject = taskPostService.getDepTaskInformation(depNo, pageSize, pageNumber);
+            JSONObject jsonObject = taskPostService.getDepTaskInformation(depNo, searchData, pageSize, pageNumber);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();

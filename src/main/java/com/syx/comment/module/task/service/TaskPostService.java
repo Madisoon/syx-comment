@@ -31,11 +31,12 @@ public interface TaskPostService {
      * 根据部门获取信息
      *
      * @param depNo
+     * @param searchData
      * @param pageSize
      * @param pageNumber
      * @return JSONObject
      */
-    JSONObject getDepTaskInformation(String depNo, String pageSize, String pageNumber);
+    JSONObject getDepTaskInformation(String depNo, String searchData, String pageSize, String pageNumber);
 
     /**
      * 根据数据包获取审核信息
