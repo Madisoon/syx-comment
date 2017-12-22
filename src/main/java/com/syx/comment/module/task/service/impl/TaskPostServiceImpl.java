@@ -93,7 +93,6 @@ public class TaskPostServiceImpl implements TaskPostService {
                 }
             }
             stringBuffer.append("ORDER BY a.task_create_time DESC");
-            System.out.println(stringBuffer.toString());
             String sqlPage = stringBuffer.toString() + SqlEasy.limitPage(pageSize, pageNumber);
             List<Map<String, String>> list = baseDao.rawQuery(stringBuffer.toString(), new String[]{depNo});
             JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
@@ -224,10 +223,6 @@ public class TaskPostServiceImpl implements TaskPostService {
     @Override
     public JSONObject getTaskChooseInformation(String sysPacketNo, String searchData, String pageSize, String pageNumber) {
         JSONObject jsonObject = JSON.parseObject(searchData);
-        String checkTime = jsonObject.getString("checkTime");
-        String postTime = jsonObject.getString("postTime");
-        jsonObject.remove("checkTime");
-        jsonObject.remove("postTime");
         String sqlChoose = "SELECT * FROM (SELECT a.*,b.user_nick_name,b.user_dep,c.dep_name,d.task_config_name FROM sys_task_finish a ,sys_user b ," +
                 "sys_department c ,sys_task_config d   " +
                 "WHERE a.task_creater = b.user_name AND b.user_dep = c.dep_no AND a.task_type = d.id ) a  " +
