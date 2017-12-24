@@ -177,4 +177,26 @@ public class TaskPostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
         }
     }
+
+    @GetMapping(value = "/exportExcelTaskRank")
+    @ApiOperation(value = "exportExcelTaskRank", notes = "获取排名")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "sysPacketNo", value = "系统编号", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "rankType", value = "排名的类型", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "searchData", value = "搜索的排序", required = true, dataType = "STRING")
+    })
+    public ResponseEntity exportExcelTaskRank(@RequestParam("sysPacketNo") String sysPacketNo,
+                                              @RequestParam("rankType") String rankType,
+                                              @RequestParam("searchData") String searchData) {
+        try {
+            String fileUrl = taskPostService.exportExcelTaskRank(sysPacketNo, rankType, searchData);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("url", fileUrl);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
 }

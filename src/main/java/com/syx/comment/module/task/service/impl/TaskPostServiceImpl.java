@@ -7,6 +7,7 @@ import com.fantasi.common.db.dao.BaseDao;
 import com.syx.comment.entity.SysTaskFinish;
 import com.syx.comment.module.task.service.TaskPostService;
 import com.syx.comment.repository.SysTaskFinishRepository;
+import com.syx.comment.utils.DataExport;
 import com.syx.comment.utils.SqlEasy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class TaskPostServiceImpl implements TaskPostService {
 
     @Autowired
     BaseDao baseDao;
+
+    @Autowired
+    DataExport dataExport;
 
     // jpa 使用原生sql语句
     @PersistenceContext
@@ -246,5 +250,13 @@ public class TaskPostServiceImpl implements TaskPostService {
         jsonObjectData.put("total", listTotal.size());
         jsonObjectData.put("data", jsonArray);
         return jsonObjectData;
+    }
+
+    @Override
+    public String exportExcelTaskRank(String sysPacketNo, String rankType, String searchData) {
+        JSONArray jsonArray = new JSONArray();
+        JSONObject jsonObject = getTaskRankInformation(sysPacketNo, rankType, searchData, "1000", "1");
+        jsonArray = jsonObject.getJSONArray("data");
+        return dataExport.exportCustomerData(jsonArray, rankType);
     }
 }

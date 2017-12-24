@@ -80,4 +80,13 @@ public interface TaskPostService {
      * @return JSONObject
      */
     JSONObject getTaskChooseInformation(String sysPacketNo, String searchData, String pageSize, String pageNumber);
+
+    /**
+     * 导出任务的排名数据
+     *
+     * @param sysPacketNo
+     * @param searchData
+     * @return
+     */
+    String exportExcelTaskRank(String sysPacketNo, String rankType, String searchData);
 }
