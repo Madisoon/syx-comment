@@ -39,4 +39,12 @@ public interface PacketManageService {
      */
     JSONObject deletePacketInformation(String packetId);
 
+    /**
+     * 根据编号获取部门
+     *
+     * @param PacketNo
+     * @return
+     */
+    SysPacket getSysPacketByPacketNo(String PacketNo);
+
 }

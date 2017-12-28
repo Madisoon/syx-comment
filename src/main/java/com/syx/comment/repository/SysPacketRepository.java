@@ -11,4 +11,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @create 2017-11-11 10:53
  */
 public interface SysPacketRepository extends JpaRepository<SysPacket, Long> {
+    /**
+     * 获取系统名称
+     *
+     * @param PacketNo
+     * @return
+     */
+    SysPacket findSysPacketByPacketNo(String PacketNo);
 }

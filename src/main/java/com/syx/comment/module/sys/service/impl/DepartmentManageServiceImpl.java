@@ -68,6 +68,20 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
 
     @Override
     public void deleteDepartment(Long id) {
+        SysDepartment sysDepartment = sysDepartmentRepository.getOne(id);
+        String depNo = sysDepartment.getDepNo();
+        List<SysUser> userList = sysUserRepository.findSysUserByUserDep(Integer.parseInt(depNo));
+        int userListLen = userList.size();
+        for (int i = 0; i < userListLen; i++) {
+            SysUser sysUser = userList.get(i);
+            String userName = sysUser.getUserName();
+            String roleDelete = "DELETE FROM sys_role_user WHERE user_id = ? ";
+            baseDao.execute(roleDelete, new String[]{userName});
+            String finishDelete = "DELETE FROM sys_task_finish WHERE task_creater = ? ";
+            baseDao.execute(roleDelete, new String[]{finishDelete});
+        }
+        String dep = "DELETE FROM sys_user WHERE user_dep = ? ";
+        baseDao.execute(dep, new String[]{depNo});
         sysDepartmentRepository.delete(id);
     }
 }

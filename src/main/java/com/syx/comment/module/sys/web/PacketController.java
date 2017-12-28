@@ -81,4 +81,21 @@ public class PacketController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
         }
     }
+
+    @GetMapping(value = "/getSysPacketByPacketNo")
+    @ApiOperation(value = "getSysPacketByPacketNo", notes = "根据编号获取系统内容")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "packetNo", value = "系统编号", required = true, dataType = "STRING")
+    })
+    public ResponseEntity getSysPacketByPacketNo(@RequestParam("packetNo") String packetNo) {
+        try {
+            SysPacket sysPacket = packetManageService.getSysPacketByPacketNo(packetNo);
+            return ResponseEntity.ok().body(sysPacket);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
 }

@@ -28,8 +28,6 @@ import java.util.List;
 
 @Service
 public class PacketManageServiceImpl implements PacketManageService {
-    @Autowired
-    BaseDao baseDao;
 
     @Autowired
     SysPacketRepository sysPacketRepository;
@@ -42,6 +40,9 @@ public class PacketManageServiceImpl implements PacketManageService {
 
     @Autowired
     SysRoleUserRepository sysRoleUserRepository;
+
+    @Autowired
+    BaseDao baseDao;
 
     @Override
     public SysPacket savePacketInformation(SysPacket sysPacket, SysUser sysUser, String areaId) {
@@ -107,6 +108,17 @@ public class PacketManageServiceImpl implements PacketManageService {
             listArea.add(sysAreaPacket);
             listPacket.add(sysPacket);
         }
+        SysPacket sysPacketData = sysPacketRepository.getOne(Long.parseLong(packetId));
+        String packetNo = sysPacketData.getPacketNo();
+        String deleteConfig = "DELETE FROM  sys_task_config WHERE task_packet_no = " + packetNo + " ";
+        baseDao.execute(deleteConfig, null);
+        String finishConfig = "DELETE FROM  sys_task_finish WHERE task_packet_no = " + packetNo + " ";
+        baseDao.execute(finishConfig, null);
+        String releaseConfig = " DELETE FROM  sys_task_release WHERE  task_packet_no = " + packetNo + " ";
+        baseDao.execute(releaseConfig, null);
+        String userConfig = " DELETE FROM  sys_user WHERE user_packet_no = " + packetNo + " ";
+        baseDao.execute(userConfig, null);
+
         JSONObject jsonObject = new JSONObject();
         try {
             sysPacketRepository.delete(listPacket);
@@ -116,5 +128,10 @@ public class PacketManageServiceImpl implements PacketManageService {
             jsonObject.put("result", 0);
         }
         return jsonObject;
+    }
+
+    @Override
+    public SysPacket getSysPacketByPacketNo(String PacketNo) {
+        return sysPacketRepository.findSysPacketByPacketNo(PacketNo);
     }
 }

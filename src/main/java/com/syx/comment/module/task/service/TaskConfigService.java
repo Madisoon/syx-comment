@@ -44,12 +44,11 @@ public interface TaskConfigService {
     /**
      * 分页得到任务的信息
      *
-     * @param id
      * @param pageNumber
      * @param pageSize
      * @return
      */
-    JSONObject getTaskReleaseInformation(String pageNumber, String pageSize);
+    JSONObject getTaskReleaseInformation(String sysPacketNo, String pageNumber, String pageSize);
 
     /**
      * 保存任务适用部门的信息
@@ -77,11 +76,13 @@ public interface TaskConfigService {
     JSONObject deleteTaskInformation(String taskId);
 
     /**
-     *根据系统编号和部门编号获取所有的通知
+     * 根据系统编号和部门编号获取所有的通知
      *
      * @param sysPacketNo
      * @param depNo
+     * @param pageSize
+     * @param pageNumber
      * @return
      */
-    JSONArray getAllNoteInformation(String sysPacketNo, String depNo);
+    JSONObject getAllNoteInformation(String sysPacketNo, String depNo, String pageSize, String pageNumber);
 }

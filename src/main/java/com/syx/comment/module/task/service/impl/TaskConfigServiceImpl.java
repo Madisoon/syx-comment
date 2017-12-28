@@ -75,11 +75,11 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public JSONObject getTaskReleaseInformation(String pageNumber, String pageSize) {
+    public JSONObject getTaskReleaseInformation(String sysPacketNo, String pageNumber, String pageSize) {
         String selectSqlTotal = "SELECT * FROM sys_task_release a ";
         String selectSql = "SELECT a.*,COUNT(b.id) AS dep_number,GROUP_CONCAT(b.dep_no) as dep_nos FROM " +
                 "(SELECT a.*,b.task_config_name FROM sys_task_release a ,sys_task_config b  " +
-                "WHERE  a.task_config_id = b.id  ORDER BY a.task_create_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ) a " +
+                "WHERE  a.task_config_id = b.id AND a.task_packet_no = '" + sysPacketNo + "'  ORDER BY a.task_create_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ) a " +
                 "LEFT JOIN sys_task_release_department b ON a.id = b.task_release_id GROUP BY a.id ";
         List<Map<String, String>> listTotal = baseDao.rawQuery(selectSqlTotal);
         List<Map<String, String>> list = baseDao.rawQuery(selectSql);
@@ -138,13 +138,18 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public JSONArray getAllNoteInformation(String sysPacketNo, String depNo) {
-        String sqlSelect = "SELECT a.*,c.task_config_name FROM sys_task_release a,  " +
+    public JSONObject getAllNoteInformation(String sysPacketNo, String depNo, String pageSize, String pageNumber) {
+        String sqlTotal = "SELECT a.*,c.task_config_name FROM sys_task_release a,  " +
                 "sys_task_release_department b,sys_task_config c " +
                 "WHERE a.id = b.task_release_id AND a.task_config_id = c.id  " +
                 "AND a.task_packet_no = ?  " +
-                "AND b.dep_no = ? ORDER BY a.task_create_time DESC";
+                "AND b.dep_no = ? ORDER BY a.task_create_time DESC ";
+        String sqlSelect = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber) + "";
         JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, depNo}));
-        return jsonArray;
+        JSONArray jsonArrayTotal = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo, depNo}));
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("data", jsonArray);
+        jsonObject.put("total", jsonArrayTotal.size());
+        return jsonObject;
     }
 }

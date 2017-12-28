@@ -106,13 +106,15 @@ public class TaskConfigController {
     @GetMapping(value = "/getTaskReleaseInformation")
     @ApiOperation(value = "getTaskReleaseInformation", notes = "发布任务")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "sysPacketNo", value = "系统编号", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageSize", value = "每一页的大小", required = true, dataType = "STRING"),
             @ApiImplicitParam(name = "pageNumber", value = "页数", required = true, dataType = "STRING")
     })
-    public ResponseEntity getTaskReleaseInformation(@RequestParam("pageSize") String pageSize,
+    public ResponseEntity getTaskReleaseInformation(@RequestParam("sysPacketNo") String sysPacketNo,
+                                                    @RequestParam("pageSize") String pageSize,
                                                     @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONObject jsonObject = taskConfigService.getTaskReleaseInformation(pageNumber, pageSize);
+            JSONObject jsonObject = taskConfigService.getTaskReleaseInformation(sysPacketNo, pageNumber, pageSize);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,10 +162,12 @@ public class TaskConfigController {
             @ApiImplicitParam(name = "depNo", value = "部门编码", required = true, dataType = "STRING")
     })
     public ResponseEntity getAllNoteInformation(@RequestParam("sysPacketNo") String sysPacketNo,
-                                                @RequestParam("depNo") String depNo) {
+                                                @RequestParam("depNo") String depNo,
+                                                @RequestParam("pageSize") String pageSize,
+                                                @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONArray jsonArray = taskConfigService.getAllNoteInformation(sysPacketNo, depNo);
-            return ResponseEntity.ok().body(jsonArray);
+            JSONObject jsonObject = taskConfigService.getAllNoteInformation(sysPacketNo, depNo, pageSize, pageNumber);
+            return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
             ExecResult er = new ExecResult(false, e.getMessage());

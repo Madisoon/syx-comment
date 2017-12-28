@@ -135,13 +135,21 @@ public class UserManageServiceImpl implements UserManageService {
         String[] userIdS = userId.split(",");
         int userIdSLen = userIdS.length;
         List<SysUser> list = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject();
         for (int i = 0; i < userIdSLen; i++) {
             SysUser sysUser = new SysUser();
             sysUser.setId(Long.parseLong(userIdS[i]));
+            sysUser.setUserName("");
             list.add(sysUser);
+            SysUser sysUserData = sysUserRepository.findOne(Long.parseLong(userIdS[i]));
+            String userName = sysUserData.getUserName();
+            String roleDelete = "DELETE FROM sys_role_user WHERE user_id = ? ";
+            baseDao.execute(roleDelete, new String[]{userName});
+            String finishDelete = "DELETE FROM sys_task_finish WHERE task_creater = ? ";
+            baseDao.execute(roleDelete, new String[]{finishDelete});
         }
-        JSONObject jsonObject = new JSONObject();
         try {
+            // 删除角色
             sysUserRepository.delete(list);
             jsonObject.put("result", 1);
         } catch (Exception e) {
@@ -154,14 +162,14 @@ public class UserManageServiceImpl implements UserManageService {
     public JSONObject getUserInformationByDep(String roleType, String sysPacketNo, String depNo, String pageSize, String pageNumber) {
         JSONObject jsonObject = new JSONObject();
         if (ROLE_TYPE.equals(roleType)) {
-            String sqlTotal = "SELECT * FROM sys_user a WHERE a.user_dep = ? ORDER BY a.user_create_time DESC ";
+            String sqlTotal = "SELECT * FROM sys_user a WHERE a.user_dep = ? AND a.user_packet_no = ? ORDER BY a.user_create_time DESC ";
             String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
-            List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo});
-            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
+            List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo, sysPacketNo});
+            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo, sysPacketNo}));
             jsonObject.put("total", list.size());
             jsonObject.put("data", jsonArray);
         } else {
-            String sqlTotal = "SELECT * FROM sys_user a, sys_role_user b  " +
+            String sqlTotal = "SELECT a.* FROM sys_user a, sys_role_user b  " +
                     "WHERE a.user_packet_no = ?   " +
                     "AND a.user_name = b.user_id AND b.role_id = '5' " +
                     "ORDER BY a.user_create_time DESC ";
