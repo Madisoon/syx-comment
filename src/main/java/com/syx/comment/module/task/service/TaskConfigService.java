@@ -2,6 +2,7 @@ package com.syx.comment.module.task.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.syx.comment.entity.SysTaskConfig;
 import com.syx.comment.entity.SysTaskRelease;
 import com.syx.comment.entity.SysTaskReleaseDepartment;
@@ -84,5 +85,23 @@ public interface TaskConfigService {
      * @param pageNumber
      * @return
      */
-    JSONObject getAllNoteInformation(String sysPacketNo, String depNo, String pageSize, String pageNumber);
+    JSONObject getAllNoteInformation(String sysPacketNo, String depNo, String userName, String pageSize, String pageNumber);
+
+    /**
+     * 标记已读或者未读消息
+     *
+     * @param type
+     * @param taskReleaseId
+     * @param userName
+     * @return
+     */
+    JSONObject tabReadOrFinish(String type, String taskReleaseId, String userName);
+
+    /**
+     * 删除标记
+     * @param type
+     * @param id
+     * @return
+     */
+    JSONObject removeReadOrFinish(String type, String id);
 }

@@ -26,8 +26,8 @@ public class SysTaskRelease {
     @Column(name = "task_content")
     private String taskContent;
 
-/*    @Column(name = "task_number")
-    private String taskNumber;*/
+    @Column(name = "task_number")
+    private String taskNumber;
 
     @Column(name = "task_create_time")
     private Date taskCreateTime;
@@ -70,13 +70,13 @@ public class SysTaskRelease {
         this.taskContent = taskContent;
     }
 
-/*    public String getTaskNumber() {
+    public String getTaskNumber() {
         return taskNumber;
     }
 
     public void setTaskNumber(String taskNumber) {
         this.taskNumber = taskNumber;
-    }*/
+    }
 
     public Date getTaskCreateTime() {
         return taskCreateTime;

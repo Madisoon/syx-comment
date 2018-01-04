@@ -33,6 +33,9 @@ public class SysPacket {
     @Column(name = "packet_status")
     private int packetStatus;
 
+    @Column(name = "packet_dep_limit")
+    private int packetDepLimit;
+
     public Long getId() {
         return id;
     }
@@ -79,5 +82,13 @@ public class SysPacket {
 
     public void setPacketStatus(int packetStatus) {
         this.packetStatus = packetStatus;
+    }
+
+    public int getPacketDepLimit() {
+        return packetDepLimit;
+    }
+
+    public void setPacketDepLimit(int packetDepLimit) {
+        this.packetDepLimit = packetDepLimit;
     }
 }

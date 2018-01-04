@@ -82,6 +82,8 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
         }
         String dep = "DELETE FROM sys_user WHERE user_dep = ? ";
         baseDao.execute(dep, new String[]{depNo});
+        String releaseDelete = "DELETE FROM sys_task_release_department WHERE dep_no = ? ";
+        baseDao.execute(releaseDelete, new String[]{depNo});
         sysDepartmentRepository.delete(id);
     }
 }

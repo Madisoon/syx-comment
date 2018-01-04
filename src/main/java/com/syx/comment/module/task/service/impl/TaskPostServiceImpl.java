@@ -108,7 +108,7 @@ public class TaskPostServiceImpl implements TaskPostService {
 
     @Override
     public JSONObject getPacketInformation(String sysPacketNo, String taskStatus, String pageSize, String pageNumber) {
-        String sqlTotal = "SELECT a.*,c.dep_name,d.task_config_name,d.task_mark FROM sys_task_finish a , sys_user b,  " +
+        String sqlTotal = "SELECT a.*,c.dep_name,d.task_config_name,d.task_mark as task_config_mark FROM sys_task_finish a , sys_user b,  " +
                 "sys_department c, sys_task_config d " +
                 "WHERE a.task_creater = b.user_name AND b.user_dep = c.dep_no AND a.task_type = d.id  " +
                 "AND a.task_packet_no = ? ";
@@ -227,7 +227,7 @@ public class TaskPostServiceImpl implements TaskPostService {
     @Override
     public JSONObject getTaskChooseInformation(String sysPacketNo, String searchData, String pageSize, String pageNumber) {
         JSONObject jsonObject = JSON.parseObject(searchData);
-        String sqlChoose = "SELECT * FROM (SELECT a.*,b.user_nick_name,b.user_dep,c.dep_name,d.task_config_name,d.task_mark FROM sys_task_finish a ,sys_user b ," +
+        String sqlChoose = "SELECT * FROM (SELECT a.*,b.user_nick_name,b.user_dep,c.dep_name,d.task_config_name,d.task_mark as task_config_mark FROM sys_task_finish a ,sys_user b ," +
                 "sys_department c ,sys_task_config d   " +
                 "WHERE a.task_creater = b.user_name AND b.user_dep = c.dep_no AND a.task_type = d.id ) a  " +
                 "WHERE a.task_status ='2' AND a.task_packet_no = '" + sysPacketNo + "' ";

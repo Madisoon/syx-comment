@@ -159,14 +159,54 @@ public class TaskConfigController {
     @ApiOperation(value = "getAllNoteInformation", notes = "删除任务")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sysPacketNo", value = "系统的数据包编码", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "depNo", value = "部门编码", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "depNo", value = "部门编码", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "userName", value = "用户登陆名称", required = true, dataType = "STRING")
     })
     public ResponseEntity getAllNoteInformation(@RequestParam("sysPacketNo") String sysPacketNo,
                                                 @RequestParam("depNo") String depNo,
+                                                @RequestParam("userName") String userName,
                                                 @RequestParam("pageSize") String pageSize,
                                                 @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONObject jsonObject = taskConfigService.getAllNoteInformation(sysPacketNo, depNo, pageSize, pageNumber);
+            JSONObject jsonObject = taskConfigService.getAllNoteInformation(sysPacketNo, depNo, userName, pageSize, pageNumber);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @PutMapping(value = "/tabReadOrFinish")
+    @ApiOperation(value = "tabReadOrFinish", notes = "删除任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "任务的id", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "taskId", value = "任务的id", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "taskId", value = "任务的id", required = true, dataType = "STRING")
+    })
+    public ResponseEntity tabReadOrFinish(@RequestParam("type") String type,
+                                          @RequestParam("taskReleaseId") String taskReleaseId,
+                                          @RequestParam("userName") String userName) {
+        try {
+            JSONObject jsonObject = taskConfigService.tabReadOrFinish(type, taskReleaseId, userName);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @PutMapping(value = "/removeReadOrFinish")
+    @ApiOperation(value = "removeReadOrFinish", notes = "删除任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "type", value = "任务的id", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "taskId", value = "任务的id", required = true, dataType = "STRING")
+    })
+    public ResponseEntity removeReadOrFinish(@RequestParam("type") String type,
+                                             @RequestParam("id") String id) {
+        try {
+            JSONObject jsonObject = taskConfigService.removeReadOrFinish(type, id);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();

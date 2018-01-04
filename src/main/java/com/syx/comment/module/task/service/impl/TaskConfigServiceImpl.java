@@ -4,13 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
-import com.syx.comment.entity.SysTaskConfig;
-import com.syx.comment.entity.SysTaskRelease;
-import com.syx.comment.entity.SysTaskReleaseDepartment;
+import com.syx.comment.entity.*;
 import com.syx.comment.module.task.service.TaskConfigService;
-import com.syx.comment.repository.SysTaskConfigRepository;
-import com.syx.comment.repository.SysTaskReleaseDepartmentRepository;
-import com.syx.comment.repository.SysTaskReleaseRepository;
+import com.syx.comment.repository.*;
 import com.syx.comment.utils.SqlEasy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +34,12 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
     @Autowired
     SysTaskReleaseDepartmentRepository sysTaskReleaseDepartmentRepository;
+
+    @Autowired
+    SysReadTabRepository sysReadTabRepository;
+
+    @Autowired
+    SysFinishTabRepository sysFinishTabRepository;
 
     @Autowired
     BaseDao baseDao;
@@ -138,18 +140,53 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public JSONObject getAllNoteInformation(String sysPacketNo, String depNo, String pageSize, String pageNumber) {
-        String sqlTotal = "SELECT a.*,c.task_config_name FROM sys_task_release a,  " +
-                "sys_task_release_department b,sys_task_config c " +
-                "WHERE a.id = b.task_release_id AND a.task_config_id = c.id  " +
-                "AND a.task_packet_no = ?  " +
-                "AND b.dep_no = ? ORDER BY a.task_create_time DESC ";
+    public JSONObject getAllNoteInformation(String sysPacketNo, String depNo, String userName, String pageSize, String pageNumber) {
+        String sqlTotal = "SELECT a.*,b.id AS finish_id,c.id AS read_id FROM (SELECT a.*,c.task_config_name FROM sys_task_release a,    " +
+                "sys_task_release_department b,sys_task_config c   " +
+                "WHERE a.id = b.task_release_id AND a.task_config_id = c.id    " +
+                "AND a.task_packet_no = ?   " +
+                "AND b.dep_no = ? ORDER BY a.task_create_time DESC ) a  " +
+                "LEFT JOIN (SELECT * FROM sys_finish_tab WHERE user_name = ? ) b ON a.id = b.task_id " +
+                "LEFT JOIN (SELECT * FROM sys_read_tab WHERE user_name = ? ) c ON a.id = c.task_id   ";
         String sqlSelect = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber) + "";
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, depNo}));
-        JSONArray jsonArrayTotal = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo, depNo}));
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, depNo, userName, userName}));
+        JSONArray jsonArrayTotal = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo, depNo, userName, userName}));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", jsonArray);
+        System.out.println(jsonArray);
         jsonObject.put("total", jsonArrayTotal.size());
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject tabReadOrFinish(String type, String taskReleaseId, String userName) {
+        String readTab = "0";
+        if (readTab.equals(type)) {
+            SysReadTab sysReadTab = new SysReadTab();
+            sysReadTab.setTaskId(Long.parseLong(taskReleaseId));
+            sysReadTab.setUserName(userName);
+            sysReadTabRepository.save(sysReadTab);
+        } else {
+            SysFinishTab sysFinishTab = new SysFinishTab();
+            sysFinishTab.setTaskId(Long.parseLong(taskReleaseId));
+            sysFinishTab.setUserName(userName);
+            sysFinishTabRepository.save(sysFinishTab);
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", 1);
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject removeReadOrFinish(String type, String id) {
+        String readTab = "0";
+        if (readTab.equals(type)) {
+            sysReadTabRepository.delete(Long.parseLong(id));
+        } else {
+            sysFinishTabRepository.delete(Long.parseLong(id));
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", 1);
         return jsonObject;
     }
 }
