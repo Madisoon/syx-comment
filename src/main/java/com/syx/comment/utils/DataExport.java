@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @Component
 public class DataExport {
-    public String exportCustomerData(JSONArray jsonArray, String rankType) {
+    public String exportCustomerData(JSONArray jsonArray, String rankType, String filePath) {
         List list = new ArrayList();
         DocumentHandler documentHandler = new DocumentHandler();
         int jsonArrayLen = jsonArray.size();
@@ -51,7 +51,7 @@ public class DataExport {
         String fileName = longTime + ".xls";
         String fileFtl = "rankFtl.ftl";
         try {
-            documentHandler.createDoc(maps, "C:/dummyPath/" + fileName, fileFtl);
+            documentHandler.createDoc(maps, filePath + fileName, fileFtl);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

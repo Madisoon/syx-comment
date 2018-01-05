@@ -85,8 +85,10 @@ public interface TaskPostService {
      * 导出任务的排名数据
      *
      * @param sysPacketNo
+     * @param rankType
      * @param searchData
+     * @param filePath
      * @return
      */
-    String exportExcelTaskRank(String sysPacketNo, String rankType, String searchData);
+    String exportExcelTaskRank(String sysPacketNo, String rankType, String searchData, String filePath);
 }

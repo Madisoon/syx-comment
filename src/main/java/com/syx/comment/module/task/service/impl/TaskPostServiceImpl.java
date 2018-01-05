@@ -75,10 +75,12 @@ public class TaskPostServiceImpl implements TaskPostService {
                     " WHERE a.task_creater = b.user_name AND b.user_dep = ? AND a.task_type = c.id AND c.task_status = '1' " +
                     "ORDER BY a.task_create_time DESC ";
             String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
+            System.out.println(sqlPage);
             List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo});
             JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
             jsonObject.put("total", list.size());
             jsonObject.put("data", jsonArray);
+            System.out.println(jsonObject.toString());
         } else {
             JSONObject jsonObjectData = JSON.parseObject(searchData);
             StringBuffer stringBuffer = new StringBuffer();
@@ -96,7 +98,7 @@ public class TaskPostServiceImpl implements TaskPostService {
                     stringBuffer.append(" AND a." + value + " LIKE '%" + jsonObjectData.getString(value) + "%' ");
                 }
             }
-            stringBuffer.append("ORDER BY a.task_create_time DESC");
+            stringBuffer.append("ORDER BY a.task_create_time DESC ");
             String sqlPage = stringBuffer.toString() + SqlEasy.limitPage(pageSize, pageNumber);
             List<Map<String, String>> list = baseDao.rawQuery(stringBuffer.toString(), new String[]{depNo});
             JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo}));
@@ -136,7 +138,7 @@ public class TaskPostServiceImpl implements TaskPostService {
     public SysTaskFinish saveTaskFinishInformationPart(SysTaskFinish sysTaskFinish, String userName) {
         SysTaskFinish sysTaskFinishData = sysTaskFinishRepository.findOne(sysTaskFinish.getId());
         String taskFeedback = sysTaskFinish.getTaskFeedback();
-        int taskStatus = sysTaskFinish.getTaskMark();
+        double taskStatus = sysTaskFinish.getTaskMark();
         sysTaskFinishData.setTaskMark(taskStatus);
         sysTaskFinishData.setTaskStatus(sysTaskFinish.getTaskStatus());
         if (!"".equals(taskFeedback)) {
@@ -253,10 +255,10 @@ public class TaskPostServiceImpl implements TaskPostService {
     }
 
     @Override
-    public String exportExcelTaskRank(String sysPacketNo, String rankType, String searchData) {
+    public String exportExcelTaskRank(String sysPacketNo, String rankType, String searchData, String filePath) {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = getTaskRankInformation(sysPacketNo, rankType, searchData, "1000", "1");
         jsonArray = jsonObject.getJSONArray("data");
-        return dataExport.exportCustomerData(jsonArray, rankType);
+        return dataExport.exportCustomerData(jsonArray, rankType, filePath);
     }
 }

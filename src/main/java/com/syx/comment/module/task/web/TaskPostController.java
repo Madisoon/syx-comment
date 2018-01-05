@@ -187,9 +187,11 @@ public class TaskPostController {
     })
     public ResponseEntity exportExcelTaskRank(@RequestParam("sysPacketNo") String sysPacketNo,
                                               @RequestParam("rankType") String rankType,
-                                              @RequestParam("searchData") String searchData) {
+                                              @RequestParam("searchData") String searchData, HttpServletRequest request) {
         try {
-            String fileUrl = taskPostService.exportExcelTaskRank(sysPacketNo, rankType, searchData);
+            String filePath = request.getSession().getServletContext().getRealPath("/");
+            String fileUrl = taskPostService.exportExcelTaskRank(sysPacketNo, rankType, searchData, filePath);
+
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("url", fileUrl);
             return ResponseEntity.ok().body(jsonObject);

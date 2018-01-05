@@ -54,7 +54,7 @@ public class SysTaskFinish {
     private int taskStatus;
 
     @Column(name = "task_mark")
-    private int taskMark;
+    private double taskMark;
 
     @Column(name = "task_feedback")
     private String taskFeedback;
@@ -178,11 +178,11 @@ public class SysTaskFinish {
         this.taskStatus = taskStatus;
     }
 
-    public int getTaskMark() {
+    public double getTaskMark() {
         return taskMark;
     }
 
-    public void setTaskMark(int taskMark) {
+    public void setTaskMark(double taskMark) {
         this.taskMark = taskMark;
     }
 
