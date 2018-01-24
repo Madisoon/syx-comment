@@ -30,7 +30,7 @@ public class SysUser {
     private String userPwd;
 
     @Column(name = "user_dep")
-    private int userDep;
+    private String userDep;
 
     @Column(name = "user_packet_no")
     private String userPacketNo;
@@ -78,11 +78,11 @@ public class SysUser {
         this.userPwd = userPwd;
     }
 
-    public int getUserDep() {
+    public String getUserDep() {
         return userDep;
     }
 
-    public void setUserDep(int userDep) {
+    public void setUserDep(String userDep) {
         this.userDep = userDep;
     }
 

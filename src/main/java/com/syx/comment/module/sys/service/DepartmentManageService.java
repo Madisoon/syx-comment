@@ -37,4 +37,11 @@ public interface DepartmentManageService {
      * @param id
      */
     void deleteDepartment(Long id);
+
+    /**
+     * 判断该部门是否已有编号
+     * @param depNo
+     * @return
+     */
+    SysDepartment getDepartmentByDepNo(String depNo);
 }

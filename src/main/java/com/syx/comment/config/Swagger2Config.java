@@ -9,7 +9,13 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
+/**
+ * 描述:
+ * cors实现后台方法跨域配置
+ *
+ * @author Msater Zg
+ * @create 2018-01-24 10:49
+ */
 @Configuration
 @EnableSwagger2
 public class Swagger2Config {
@@ -19,16 +25,6 @@ public class Swagger2Config {
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
-                .build();
-    }
-
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Spring Boot中使用Swagger2构建RESTful APIs")
-                .description("spring Boot 中构建RESTful API")
-                .termsOfServiceUrl("")
-                .contact("zg")
-                .version("1.0")
                 .build();
     }
 }

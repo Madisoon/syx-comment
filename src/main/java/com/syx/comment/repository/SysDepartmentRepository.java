@@ -20,4 +20,12 @@ public interface SysDepartmentRepository extends JpaRepository<SysDepartment, Lo
      * @return
      */
     List<SysDepartment> findSysDepartmentByDepPacketNo(String depPacketNo);
+
+    /**
+     * 根据部门的编号获取部门的信息
+     *
+     * @param depNo
+     * @return
+     */
+    SysDepartment findSysDepartmentByDepNo(String depNo);
 }

@@ -86,4 +86,9 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
         baseDao.execute(releaseDelete, new String[]{depNo});
         sysDepartmentRepository.delete(id);
     }
+
+    @Override
+    public SysDepartment getDepartmentByDepNo(String depNo) {
+        return sysDepartmentRepository.findSysDepartmentByDepNo(depNo);
+    }
 }

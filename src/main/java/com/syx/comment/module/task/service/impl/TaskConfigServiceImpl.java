@@ -7,10 +7,10 @@ import com.fantasi.common.db.dao.BaseDao;
 import com.syx.comment.entity.*;
 import com.syx.comment.module.task.service.TaskConfigService;
 import com.syx.comment.repository.*;
+import com.syx.comment.utils.DateOrTimeUtil;
 import com.syx.comment.utils.SqlEasy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.ls.LSInput;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,7 +78,7 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
     @Override
     public JSONObject getTaskReleaseInformation(String sysPacketNo, String pageNumber, String pageSize) {
-        String selectSqlTotal = "SELECT * FROM sys_task_release a ";
+        String selectSqlTotal = "SELECT * FROM sys_task_release a WHERE task_packet_no = '" + sysPacketNo + "' ";
         String selectSql = "SELECT a.*,COUNT(b.id) AS dep_number,GROUP_CONCAT(b.dep_no) as dep_nos FROM " +
                 "(SELECT a.*,b.task_config_name FROM sys_task_release a ,sys_task_config b  " +
                 "WHERE  a.task_config_id = b.id AND a.task_packet_no = '" + sysPacketNo + "'  ORDER BY a.task_create_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ) a " +
@@ -187,6 +187,23 @@ public class TaskConfigServiceImpl implements TaskConfigService {
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
+        return jsonObject;
+    }
+
+    @Override
+    public JSONObject getTaskReleaseByNumber(String taskNumber, String depNo) {
+        String selectSql = "SELECT * FROM sys_task_release a ,sys_task_release_department b " +
+                "WHERE a.id = b.task_release_id AND a.task_number = ? " +
+                "AND b.dep_no = ? AND a.task_finish_time >= ? ";
+        Map map = baseDao.rawQueryForMap(selectSql, new String[]{taskNumber, depNo, DateOrTimeUtil.getNowTimeByDifferentFormat("yyyy-MM-dd HH-mm")});
+        JSONObject jsonObject = new JSONObject();
+        if (map == null) {
+            jsonObject.put("result", 0);
+        } else {
+            jsonObject.put("result", 1);
+            JSONObject jsonObjectMap = (JSONObject) JSON.toJSON(map);
+            jsonObject.put("data", jsonObjectMap);
+        }
         return jsonObject;
     }
 }

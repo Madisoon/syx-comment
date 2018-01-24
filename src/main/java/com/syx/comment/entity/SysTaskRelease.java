@@ -29,6 +29,9 @@ public class SysTaskRelease {
     @Column(name = "task_number")
     private String taskNumber;
 
+    @Column(name = "task_finish_time")
+    private String taskFinishTime;
+
     @Column(name = "task_create_time")
     private Date taskCreateTime;
 
@@ -76,6 +79,14 @@ public class SysTaskRelease {
 
     public void setTaskNumber(String taskNumber) {
         this.taskNumber = taskNumber;
+    }
+
+    public String getTaskFinishTime() {
+        return taskFinishTime;
+    }
+
+    public void setTaskFinishTime(String taskFinishTime) {
+        this.taskFinishTime = taskFinishTime;
     }
 
     public Date getTaskCreateTime() {

@@ -99,9 +99,18 @@ public interface TaskConfigService {
 
     /**
      * 删除标记
+     *
      * @param type
      * @param id
      * @return
      */
     JSONObject removeReadOrFinish(String type, String id);
+
+    /**
+     * 根据发布的任务，和部门编号获取任务的详情
+     * @param taskNumber
+     * @param depNo
+     * @return
+     */
+    JSONObject getTaskReleaseByNumber(String taskNumber , String depNo);
 }

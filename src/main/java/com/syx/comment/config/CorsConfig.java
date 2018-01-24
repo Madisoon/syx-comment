@@ -10,12 +10,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.util.ArrayList;
 import java.util.List;
-/**
- * Created by Msater Zg on 2017/4/3.
- */
 
 /**
- * 跨域配置
+ * 描述:
+ * cors实现后台方法跨域配置
+ *
+ * @author Msater Zg
+ * @create 2018-01-24 10:49
  */
 @Configuration
 public class CorsConfig extends WebMvcConfigurerAdapter {

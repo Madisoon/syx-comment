@@ -41,6 +41,7 @@ public class DepartmentController {
                                                     @RequestParam("userInfo") String userInfo) {
         try {
             SysDepartment sysDepartment = JSON.parseObject(depInfo, SysDepartment.class);
+            System.out.println(sysDepartment.getDepNo());
             SysUser sysUser = JSON.parseObject(userInfo, SysUser.class);
             sysDepartment = departmentManageService.saveDepartmentInformation(sysDepartment, sysUser);
             return ResponseEntity.ok().body(sysDepartment);
@@ -84,4 +85,22 @@ public class DepartmentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
         }
     }
+
+    @GetMapping(value = "/getDepartmentByDepNo")
+    @ApiOperation(value = "getDepartmentByDepNo", notes = "删除部门")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "depNo", value = "部门depNo", required = true, dataType = "String")
+    })
+    public ResponseEntity getDepartmentByDepNo(@RequestParam("depNo") String depNo) {
+        try {
+            SysDepartment sysDepartment = departmentManageService.getDepartmentByDepNo(depNo);
+            return ResponseEntity.ok().body(sysDepartment);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+
 }

@@ -259,6 +259,7 @@ public class TaskPostServiceImpl implements TaskPostService {
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject = getTaskRankInformation(sysPacketNo, rankType, searchData, "1000", "1");
         jsonArray = jsonObject.getJSONArray("data");
+        System.out.println(filePath);
         return dataExport.exportCustomerData(jsonArray, rankType, filePath);
     }
 }

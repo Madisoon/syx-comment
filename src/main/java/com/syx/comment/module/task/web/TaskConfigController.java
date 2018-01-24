@@ -214,4 +214,22 @@ public class TaskConfigController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
         }
     }
+
+    @GetMapping(value = "/getTaskReleaseByNumber")
+    @ApiOperation(value = "getTaskReleaseByNumber", notes = "删除任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "taskNumber", value = "任务编号", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "depNo", value = "部门的编号", required = true, dataType = "STRING")
+    })
+    public ResponseEntity getTaskReleaseByNumber(@RequestParam("taskNumber") String taskNumber,
+                                                 @RequestParam("depNo") String depNo) {
+        try {
+            JSONObject jsonObject = taskConfigService.getTaskReleaseByNumber(taskNumber, depNo);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
 }

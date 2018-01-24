@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
 import com.syx.comment.config.JwtConfig;
+import com.syx.comment.entity.SysPacket;
 import com.syx.comment.entity.SysRoleUser;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.UserManageService;
+import com.syx.comment.repository.SysPacketRepository;
 import com.syx.comment.repository.SysRoleUserRepository;
 import com.syx.comment.repository.SysUserRepository;
 import com.syx.comment.utils.SqlEasy;
@@ -40,6 +42,9 @@ public class UserManageServiceImpl implements UserManageService {
     SysUserRepository sysUserRepository;
 
     @Autowired
+    SysPacketRepository sysPacketRepository;
+
+    @Autowired
     JwtConfig jwtConfig;
 
     @Autowired
@@ -55,15 +60,24 @@ public class UserManageServiceImpl implements UserManageService {
         if (sysUser == null) {
             jsonObject.put("result", 0);
         } else {
-            if (userPassword.equals(sysUser.getUserPwd())) {
-                jsonObject.put("result", 1);
-                String sql = "SELECT a.user_name AS userName, a.user_nick_name AS userNickName, a.user_phone AS userPhone, " +
-                        "a.user_dep AS userDep, a.user_packet_no AS userPacketNo,b.id,b.role_name " +
-                        "AS roleName FROM sys_user a ,sys_role b ,sys_role_user c  " +
-                        "WHERE a.user_name = c.user_id AND b.id = c.role_id " +
-                        "AND a.user_name = ? ";
-                JSONObject jsonObjectUser = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(sql, new String[]{userName}));
-                jsonObject.put("user", jsonObjectUser);
+            SysPacket sysPacket = sysPacketRepository.findSysPacketByPacketNo(sysUser.getUserPacketNo());
+            Boolean flag = true;
+            if (sysPacket != null) {
+                flag = sysPacket.getPacketEndTime().getTime() >= System.currentTimeMillis();
+            }
+            if (flag) {
+                if (userPassword.equals(sysUser.getUserPwd())) {
+                    jsonObject.put("result", 1);
+                    String sql = "SELECT a.user_name AS userName, a.user_nick_name AS userNickName, a.user_phone AS userPhone, " +
+                            "a.user_dep AS userDep, a.user_packet_no AS userPacketNo,b.id AS roleId , a.id ,b.role_name " +
+                            "AS roleName FROM sys_user a ,sys_role b ,sys_role_user c  " +
+                            "WHERE a.user_name = c.user_id AND b.id = c.role_id " +
+                            "AND a.user_name = ? ";
+                    JSONObject jsonObjectUser = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(sql, new String[]{userName}));
+                    jsonObject.put("user", jsonObjectUser);
+                } else {
+                    jsonObject.put("result", 0);
+                }
             } else {
                 jsonObject.put("result", 0);
             }
