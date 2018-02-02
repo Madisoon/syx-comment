@@ -45,6 +45,7 @@ public interface TaskConfigService {
     /**
      * 分页得到任务的信息
      *
+     * @param sysPacketNo
      * @param pageNumber
      * @param pageSize
      * @return
@@ -81,6 +82,7 @@ public interface TaskConfigService {
      *
      * @param sysPacketNo
      * @param depNo
+     * @param userName
      * @param pageSize
      * @param pageNumber
      * @return

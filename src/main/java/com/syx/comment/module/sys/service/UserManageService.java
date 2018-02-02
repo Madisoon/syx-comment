@@ -33,6 +33,7 @@ public interface UserManageService {
      * 保存用户信息
      *
      * @param sysUser
+     * @param roleType
      * @return SysUser
      */
     SysUser saveUserInformation(SysUser sysUser, String roleType);
