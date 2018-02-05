@@ -67,7 +67,7 @@ public class TaskConfigServiceImpl implements TaskConfigService {
             int taskDepSLen = taskDepS.length;
             for (int i = 0; i < taskDepSLen; i++) {
                 String depNo = taskDepS[i];
-                SysTaskReleaseDepartment sysTaskReleaseDepartment = new SysTaskReleaseDepartment();
+                SysTaskReleaseUser sysTaskReleaseDepartment = new SysTaskReleaseUser();
                 sysTaskReleaseDepartment.setDepNo(Long.parseLong(depNo));
                 sysTaskReleaseDepartment.setTaskReleaseId(taskReleaseId);
                 sysTaskReleaseDepartmentRepository.save(sysTaskReleaseDepartment);
@@ -93,12 +93,12 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public List<SysTaskReleaseDepartment> saveTaskDepartmentInformation(String taskId, String taskDep) {
+    public List<SysTaskReleaseUser> saveTaskDepartmentInformation(String taskId, String taskDep) {
         String[] taskDepS = taskDep.split(",");
         int taskDepSLen = taskDepS.length;
-        List<SysTaskReleaseDepartment> list = new ArrayList<>();
+        List<SysTaskReleaseUser> list = new ArrayList<>();
         for (int i = 0; i < taskDepSLen; i++) {
-            SysTaskReleaseDepartment sysTaskReleaseDepartment = new SysTaskReleaseDepartment();
+            SysTaskReleaseUser sysTaskReleaseDepartment = new SysTaskReleaseUser();
             sysTaskReleaseDepartment.setTaskReleaseId(Long.parseLong(taskId));
             sysTaskReleaseDepartment.setDepNo(Long.parseLong(taskDepS[i]));
             list.add(sysTaskReleaseDepartment);

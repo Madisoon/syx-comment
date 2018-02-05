@@ -1,6 +1,7 @@
 package com.syx.comment.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 描述:
@@ -14,7 +15,6 @@ import javax.persistence.*;
 public class SysMenu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "menu_id")
     private Long id;
 
     @Column(name = "menu_name")
@@ -32,11 +32,14 @@ public class SysMenu {
     @Column(name = "menu_attr")
     private String menuAttr;
 
-    @Column(name = "menu_status")
-    private int menuStatus;
-
     @Column(name = "menu_sort")
     private int menuSort;
+
+    @Column(name = "gmt_create")
+    private Date gmtCreate;
+
+    @Column(name = "gmt_modified")
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -86,19 +89,27 @@ public class SysMenu {
         this.menuAttr = menuAttr;
     }
 
-    public int getMenuStatus() {
-        return menuStatus;
-    }
-
-    public void setMenuStatus(int menuStatus) {
-        this.menuStatus = menuStatus;
-    }
-
     public int getMenuSort() {
         return menuSort;
     }
 
     public void setMenuSort(int menuSort) {
         this.menuSort = menuSort;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

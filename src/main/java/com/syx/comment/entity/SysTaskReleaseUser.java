@@ -5,23 +5,27 @@ import java.util.Date;
 
 /**
  * 描述:
- * 任务已读标记entiy
+ * 任务发布适用部门的entiy类
  *
  * @author Msater Zg
- * @create 2017-12-29 16:49
+ * @create 2017-11-11 10:39
  */
+
 @Entity
-@Table(name = "sys_read_tab")
-public class SysReadTab {
+@Table(name = "sys_task_release_department")
+public class SysTaskReleaseUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "task_id")
-    private Long taskId;
+    @Column(name = "task_release_id")
+    private Long taskReleaseId;
+
+    @Column(name = "receiver_account")
+    private Long receiverAccount;
 
     @Column(name = "user_account")
-    private String userName;
+    private Long userAccount;
 
     @Column(name = "gmt_create")
     private Date gmtCreate;
@@ -37,20 +41,28 @@ public class SysReadTab {
         this.id = id;
     }
 
-    public Long getTaskId() {
-        return taskId;
+    public Long getTaskReleaseId() {
+        return taskReleaseId;
     }
 
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+    public void setTaskReleaseId(Long taskReleaseId) {
+        this.taskReleaseId = taskReleaseId;
     }
 
-    public String getUserName() {
-        return userName;
+    public Long getReceiverAccount() {
+        return receiverAccount;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setReceiverAccount(Long receiverAccount) {
+        this.receiverAccount = receiverAccount;
+    }
+
+    public Long getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(Long userAccount) {
+        this.userAccount = userAccount;
     }
 
     public Date getGmtCreate() {

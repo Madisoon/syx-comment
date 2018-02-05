@@ -4,20 +4,31 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 描述:已完成标记entiy类
+ * 描述:
+ * 消息通知的entity
  *
  * @author Msater Zg
- * @create 2017-12-29 16:57
+ * @create 2018-02-05 9:07
  */
+
 @Entity
-@Table(name = "sys_finish_tab")
-public class SysFinishTab {
+@Table(name = "sys_notice")
+public class SysNotice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "task_id")
-    private Long taskId;
+    @Column(name = "notice_type")
+    private int noticeType;
+
+    @Column(name = "notice_content")
+    private String noticeContent;
+
+    @Column(name = "notice_url")
+    private String noticeUrl;
+
+    @Column(name = "notice_receive")
+    private String receive;
 
     @Column(name = "user_account")
     private String userAccount;
@@ -36,12 +47,36 @@ public class SysFinishTab {
         this.id = id;
     }
 
-    public Long getTaskId() {
-        return taskId;
+    public int getNoticeType() {
+        return noticeType;
     }
 
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+    public void setNoticeType(int noticeType) {
+        this.noticeType = noticeType;
+    }
+
+    public String getNoticeContent() {
+        return noticeContent;
+    }
+
+    public void setNoticeContent(String noticeContent) {
+        this.noticeContent = noticeContent;
+    }
+
+    public String getNoticeUrl() {
+        return noticeUrl;
+    }
+
+    public void setNoticeUrl(String noticeUrl) {
+        this.noticeUrl = noticeUrl;
+    }
+
+    public String getReceive() {
+        return receive;
+    }
+
+    public void setReceive(String receive) {
+        this.receive = receive;
     }
 
     public String getUserAccount() {

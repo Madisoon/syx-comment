@@ -24,17 +24,20 @@ public class SysPacket {
     @Column(name = "packet_name")
     private String packetName;
 
-    @Column(name = "packet_start_time")
-    private Date packetStartTime;
-
     @Column(name = "packet_end_time")
     private Date packetEndTime;
 
-    @Column(name = "packet_status")
-    private int packetStatus;
+    @Column(name = "is_using")
+    private int isUsing;
 
     @Column(name = "packet_dep_limit")
     private int packetDepLimit;
+
+    @Column(name = "gmt_create")
+    private Date gmtCreate;
+
+    @Column(name = "gmt_modified")
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -60,14 +63,6 @@ public class SysPacket {
         this.packetName = packetName;
     }
 
-    public Date getPacketStartTime() {
-        return packetStartTime;
-    }
-
-    public void setPacketStartTime(Date packetStartTime) {
-        this.packetStartTime = packetStartTime;
-    }
-
     public Date getPacketEndTime() {
         return packetEndTime;
     }
@@ -76,12 +71,12 @@ public class SysPacket {
         this.packetEndTime = packetEndTime;
     }
 
-    public int getPacketStatus() {
-        return packetStatus;
+    public int getIsUsing() {
+        return isUsing;
     }
 
-    public void setPacketStatus(int packetStatus) {
-        this.packetStatus = packetStatus;
+    public void setIsUsing(int isUsing) {
+        this.isUsing = isUsing;
     }
 
     public int getPacketDepLimit() {
@@ -90,5 +85,21 @@ public class SysPacket {
 
     public void setPacketDepLimit(int packetDepLimit) {
         this.packetDepLimit = packetDepLimit;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

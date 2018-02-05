@@ -1,11 +1,10 @@
 package com.syx.comment.module.task.web;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysTaskConfig;
 import com.syx.comment.entity.SysTaskRelease;
-import com.syx.comment.entity.SysTaskReleaseDepartment;
+import com.syx.comment.entity.SysTaskReleaseUser;
 import com.syx.comment.module.sys.web.ExecResult;
 import com.syx.comment.module.task.service.impl.TaskConfigServiceImpl;
 import io.swagger.annotations.Api;
@@ -94,7 +93,7 @@ public class TaskConfigController {
     public ResponseEntity saveTaskDepartmentInformation(@RequestParam("taskId") String taskId,
                                                         @RequestParam("taskDepartment") String taskDep) {
         try {
-            List<SysTaskReleaseDepartment> list = taskConfigService.saveTaskDepartmentInformation(taskId, taskDep);
+            List<SysTaskReleaseUser> list = taskConfigService.saveTaskDepartmentInformation(taskId, taskDep);
             return ResponseEntity.ok().body(list);
         } catch (Exception e) {
             e.printStackTrace();

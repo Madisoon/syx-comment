@@ -26,14 +26,20 @@ public class SysTaskConfig {
     @Column(name = "task_explain")
     private String taskExplain;
 
-    @Column(name = "task_status")
-    private int taskStatus;
+    @Column(name = "task_color")
+    private String taskColor;
 
-    @Column(name = "task_packet_no")
-    private Long taskPacketNo;
+    @Column(name = "is_yuqing")
+    private int isYuqing;
 
-    @Column(name = "task_time")
-    private Date taskTime;
+    @Column(name = "packet_no")
+    private Long packetNo;
+
+    @Column(name = "gmt_create")
+    private Date gmtCreate;
+
+    @Column(name = "gmt_modified")
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -67,27 +73,43 @@ public class SysTaskConfig {
         this.taskExplain = taskExplain;
     }
 
-    public int getTaskStatus() {
-        return taskStatus;
+    public String getTaskColor() {
+        return taskColor;
     }
 
-    public void setTaskStatus(int taskStatus) {
-        this.taskStatus = taskStatus;
+    public void setTaskColor(String taskColor) {
+        this.taskColor = taskColor;
     }
 
-    public Long getTaskPacketNo() {
-        return taskPacketNo;
+    public int getIsYuqing() {
+        return isYuqing;
     }
 
-    public void setTaskPacketNo(Long taskPacketNo) {
-        this.taskPacketNo = taskPacketNo;
+    public void setIsYuqing(int isYuqing) {
+        this.isYuqing = isYuqing;
     }
 
-    public Date getTaskTime() {
-        return taskTime;
+    public Long getPacketNo() {
+        return packetNo;
     }
 
-    public void setTaskTime(Date taskTime) {
-        this.taskTime = taskTime;
+    public void setPacketNo(Long packetNo) {
+        this.packetNo = packetNo;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

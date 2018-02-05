@@ -1,11 +1,9 @@
 package com.syx.comment.module.task.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.syx.comment.entity.SysTaskConfig;
 import com.syx.comment.entity.SysTaskRelease;
-import com.syx.comment.entity.SysTaskReleaseDepartment;
+import com.syx.comment.entity.SysTaskReleaseUser;
 
 import java.util.List;
 
@@ -59,7 +57,7 @@ public interface TaskConfigService {
      * @param taskDep
      * @return
      */
-    List<SysTaskReleaseDepartment> saveTaskDepartmentInformation(String taskId, String taskDep);
+    List<SysTaskReleaseUser> saveTaskDepartmentInformation(String taskId, String taskDep);
 
     /**
      * 根据id删除所有的配置的信息

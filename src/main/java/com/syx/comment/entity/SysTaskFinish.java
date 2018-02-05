@@ -17,6 +17,9 @@ public class SysTaskFinish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "task_relese_id")
+    private String taskReleseId;
+
     @Column(name = "task_number")
     private String taskNumber;
 
@@ -47,6 +50,9 @@ public class SysTaskFinish {
     @Column(name = "task_image_url")
     private String taskImageUrl;
 
+    @Column(name = "task_tag")
+    private String taskTag;
+
     @Column(name = "task_explain")
     private String taskExplain;
 
@@ -56,23 +62,23 @@ public class SysTaskFinish {
     @Column(name = "task_mark")
     private double taskMark;
 
-    @Column(name = "task_feedback")
-    private String taskFeedback;
-
-    @Column(name = "task_create_time")
-    private Date taskCreateTime;
-
-    @Column(name = "task_creater")
-    private String taskCreater;
-
-    @Column(name = "task_packet_no")
-    private Long taskPacketNo;
+    @Column(name = "user_account")
+    private String userAccount;
 
     @Column(name = "task_check_time")
     private Date taskCheckTime;
 
-    @Column(name = "task_check_people")
-    private String taskCheckPeople;
+    @Column(name = "check_account")
+    private String checkAccount;
+
+    @Column(name = "packet_no")
+    private Long packetNo;
+
+    @Column(name = "gmt_create")
+    private Date gmtCreate;
+
+    @Column(name = "gmt_modified")
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -80,6 +86,14 @@ public class SysTaskFinish {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTaskReleseId() {
+        return taskReleseId;
+    }
+
+    public void setTaskReleseId(String taskReleseId) {
+        this.taskReleseId = taskReleseId;
     }
 
     public String getTaskNumber() {
@@ -162,6 +176,14 @@ public class SysTaskFinish {
         this.taskImageUrl = taskImageUrl;
     }
 
+    public String getTaskTag() {
+        return taskTag;
+    }
+
+    public void setTaskTag(String taskTag) {
+        this.taskTag = taskTag;
+    }
+
     public String getTaskExplain() {
         return taskExplain;
     }
@@ -186,36 +208,12 @@ public class SysTaskFinish {
         this.taskMark = taskMark;
     }
 
-    public String getTaskFeedback() {
-        return taskFeedback;
+    public String getUserAccount() {
+        return userAccount;
     }
 
-    public void setTaskFeedback(String taskFeedback) {
-        this.taskFeedback = taskFeedback;
-    }
-
-    public Date getTaskCreateTime() {
-        return taskCreateTime;
-    }
-
-    public void setTaskCreateTime(Date taskCreateTime) {
-        this.taskCreateTime = taskCreateTime;
-    }
-
-    public String getTaskCreater() {
-        return taskCreater;
-    }
-
-    public void setTaskCreater(String taskCreater) {
-        this.taskCreater = taskCreater;
-    }
-
-    public Long getTaskPacketNo() {
-        return taskPacketNo;
-    }
-
-    public void setTaskPacketNo(Long taskPacketNo) {
-        this.taskPacketNo = taskPacketNo;
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
     }
 
     public Date getTaskCheckTime() {
@@ -226,11 +224,35 @@ public class SysTaskFinish {
         this.taskCheckTime = taskCheckTime;
     }
 
-    public String getTaskCheckPeople() {
-        return taskCheckPeople;
+    public String getCheckAccount() {
+        return checkAccount;
     }
 
-    public void setTaskCheckPeople(String taskCheckPeople) {
-        this.taskCheckPeople = taskCheckPeople;
+    public void setCheckAccount(String checkAccount) {
+        this.checkAccount = checkAccount;
+    }
+
+    public Long getPacketNo() {
+        return packetNo;
+    }
+
+    public void setPacketNo(Long packetNo) {
+        this.packetNo = packetNo;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

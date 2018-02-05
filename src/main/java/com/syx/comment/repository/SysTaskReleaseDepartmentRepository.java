@@ -1,6 +1,6 @@
 package com.syx.comment.repository;
 
-import com.syx.comment.entity.SysTaskReleaseDepartment;
+import com.syx.comment.entity.SysTaskReleaseUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -10,12 +10,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Msater Zg
  * @create 2017-11-11 10:59
  */
-public interface SysTaskReleaseDepartmentRepository extends JpaRepository<SysTaskReleaseDepartment, Long> {
+public interface SysTaskReleaseDepartmentRepository extends JpaRepository<SysTaskReleaseUser, Long> {
     /**
      * 根据任务编号和部门查找信息
      * @param taskReleaseId
      * @param depNo
      * @return
      */
-    SysTaskReleaseDepartment findSysTaskReleaseDepartmentByTaskReleaseIdAndDepNo(Long taskReleaseId, String depNo);
+    SysTaskReleaseUser findSysTaskReleaseDepartmentByTaskReleaseIdAndDepNo(Long taskReleaseId, String depNo);
 }

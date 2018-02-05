@@ -19,8 +19,14 @@ public class SysRoleUser {
     @Column(name = "role_id")
     private Long roleId;
 
-    @Column(name = "user_id")
-    private String userId;
+    @Column(name = "user_account")
+    private String userAccount;
+
+    @Column(name = "gmt_create")
+    private String gmtCreate;
+
+    @Column(name = "gmt_modified")
+    private String gmtModified;
 
     public Long getId() {
         return id;
@@ -38,11 +44,27 @@ public class SysRoleUser {
         this.roleId = roleId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserAccount() {
+        return userAccount;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
+    }
+
+    public String getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(String gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public String getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(String gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

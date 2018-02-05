@@ -17,26 +17,32 @@ public class SysUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_token")
+    private String userToken;
+
+    @Column(name = "user_account")
+    private String userAccount;
+
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "user_nick_name")
-    private String userNickName;
+    @Column(name = "user_password")
+    private String userPassword;
 
     @Column(name = "user_phone")
     private String userPhone;
 
-    @Column(name = "user_pwd")
-    private String userPwd;
+    @Column(name = "is_using")
+    private int isUsing = 1;
 
-    @Column(name = "user_dep")
-    private String userDep;
+    @Column(name = "user_integration")
+    private int userIntegration;
 
-    @Column(name = "user_packet_no")
-    private String userPacketNo;
+    @Column(name = "gmt_create")
+    private Date gmtCreate;
 
-    @Column(name = "user_create_time")
-    private Date userCreateTime;
+    @Column(name = "gmt_modified")
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -44,6 +50,22 @@ public class SysUser {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUserToken() {
+        return userToken;
+    }
+
+    public void setUserToken(String userToken) {
+        this.userToken = userToken;
+    }
+
+    public String getUserAccount() {
+        return userAccount;
+    }
+
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
     }
 
     public String getUserName() {
@@ -54,12 +76,12 @@ public class SysUser {
         this.userName = userName;
     }
 
-    public String getUserNickName() {
-        return userNickName;
+    public String getUserPassword() {
+        return userPassword;
     }
 
-    public void setUserNickName(String userNickName) {
-        this.userNickName = userNickName;
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
     public String getUserPhone() {
@@ -70,35 +92,35 @@ public class SysUser {
         this.userPhone = userPhone;
     }
 
-    public String getUserPwd() {
-        return userPwd;
+    public int getIsUsing() {
+        return isUsing;
     }
 
-    public void setUserPwd(String userPwd) {
-        this.userPwd = userPwd;
+    public void setIsUsing(int isUsing) {
+        this.isUsing = isUsing;
     }
 
-    public String getUserDep() {
-        return userDep;
+    public int getUserIntegration() {
+        return userIntegration;
     }
 
-    public void setUserDep(String userDep) {
-        this.userDep = userDep;
+    public void setUserIntegration(int userIntegration) {
+        this.userIntegration = userIntegration;
     }
 
-    public String getUserPacketNo() {
-        return userPacketNo;
+    public Date getGmtCreate() {
+        return gmtCreate;
     }
 
-    public void setUserPacketNo(String userPacketNo) {
-        this.userPacketNo = userPacketNo;
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
     }
 
-    public Date getUserCreateTime() {
-        return userCreateTime;
+    public Date getGmtModified() {
+        return gmtModified;
     }
 
-    public void setUserCreateTime(Date userCreateTime) {
-        this.userCreateTime = userCreateTime;
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

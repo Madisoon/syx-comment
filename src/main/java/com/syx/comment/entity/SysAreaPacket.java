@@ -1,6 +1,7 @@
 package com.syx.comment.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 描述:
@@ -22,6 +23,12 @@ public class SysAreaPacket {
 
     @Column(name = "packet_id")
     private Long packetId;
+
+    @Column(name = "gmtCreate")
+    private Date gmtCreate;
+
+    @Column(name = "gmtModified")
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -45,5 +52,21 @@ public class SysAreaPacket {
 
     public void setPacketId(Long packetId) {
         this.packetId = packetId;
+    }
+
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

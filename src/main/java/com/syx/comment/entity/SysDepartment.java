@@ -23,11 +23,14 @@ public class SysDepartment {
     @Column(name = "dep_name")
     private String depName;
 
-    @Column(name = "dep_packet_no")
-    private String depPacketNo;
+    @Column(name = "packet_no")
+    private String packetNo;
 
-    @Column(name = "dep_create_time")
-    private Date depCreateTime;
+    @Column(name = "gmt_create")
+    private Date gmtCreate;
+
+    @Column(name = "gmt_modified")
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -53,19 +56,27 @@ public class SysDepartment {
         this.depName = depName;
     }
 
-    public String getDepPacketNo() {
-        return depPacketNo;
+    public String getPacketNo() {
+        return packetNo;
     }
 
-    public void setDepPacketNo(String depPacketNo) {
-        this.depPacketNo = depPacketNo;
+    public void setPacketNo(String packetNo) {
+        this.packetNo = packetNo;
     }
 
-    public Date getDepCreateTime() {
-        return depCreateTime;
+    public Date getGmtCreate() {
+        return gmtCreate;
     }
 
-    public void setDepCreateTime(Date depCreateTime) {
-        this.depCreateTime = depCreateTime;
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+    public Date getGmtModified() {
+        return gmtModified;
+    }
+
+    public void setGmtModified(Date gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }

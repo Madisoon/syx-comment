@@ -17,29 +17,35 @@ public class SysTaskRelease {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "task_number")
+    private String taskNumber;
+
     @Column(name = "task_config_id")
     private Long taskConfigId;
 
     @Column(name = "task_name")
     private String taskName;
 
+    @Column(name = "task_tag")
+    private String taskTag;
+
     @Column(name = "task_content")
     private String taskContent;
 
-    @Column(name = "task_number")
-    private String taskNumber;
+    @Column(name = "user_account")
+    private String userAccount;
 
-    @Column(name = "task_finish_time")
-    private String taskFinishTime;
+    @Column(name = "packet_no")
+    private String packetNo;
 
-    @Column(name = "task_create_time")
-    private Date taskCreateTime;
+    @Column(name = "task_end_time")
+    private String taskEndTime;
 
-    @Column(name = "task_creater")
-    private String taskCreater;
+    @Column(name = "gmt_create")
+    private String gmtCreate;
 
-    @Column(name = "task_packet_no")
-    private String taskPacketNo;
+    @Column(name = "gmt_modified")
+    private String gmtModified;
 
     public Long getId() {
         return id;
@@ -47,6 +53,14 @@ public class SysTaskRelease {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTaskNumber() {
+        return taskNumber;
+    }
+
+    public void setTaskNumber(String taskNumber) {
+        this.taskNumber = taskNumber;
     }
 
     public Long getTaskConfigId() {
@@ -65,6 +79,14 @@ public class SysTaskRelease {
         this.taskName = taskName;
     }
 
+    public String getTaskTag() {
+        return taskTag;
+    }
+
+    public void setTaskTag(String taskTag) {
+        this.taskTag = taskTag;
+    }
+
     public String getTaskContent() {
         return taskContent;
     }
@@ -73,43 +95,43 @@ public class SysTaskRelease {
         this.taskContent = taskContent;
     }
 
-    public String getTaskNumber() {
-        return taskNumber;
+    public String getUserAccount() {
+        return userAccount;
     }
 
-    public void setTaskNumber(String taskNumber) {
-        this.taskNumber = taskNumber;
+    public void setUserAccount(String userAccount) {
+        this.userAccount = userAccount;
     }
 
-    public String getTaskFinishTime() {
-        return taskFinishTime;
+    public String getPacketNo() {
+        return packetNo;
     }
 
-    public void setTaskFinishTime(String taskFinishTime) {
-        this.taskFinishTime = taskFinishTime;
+    public void setPacketNo(String packetNo) {
+        this.packetNo = packetNo;
     }
 
-    public Date getTaskCreateTime() {
-        return taskCreateTime;
+    public String getTaskEndTime() {
+        return taskEndTime;
     }
 
-    public void setTaskCreateTime(Date taskCreateTime) {
-        this.taskCreateTime = taskCreateTime;
+    public void setTaskEndTime(String taskEndTime) {
+        this.taskEndTime = taskEndTime;
     }
 
-    public String getTaskCreater() {
-        return taskCreater;
+    public String getGmtCreate() {
+        return gmtCreate;
     }
 
-    public void setTaskCreater(String taskCreater) {
-        this.taskCreater = taskCreater;
+    public void setGmtCreate(String gmtCreate) {
+        this.gmtCreate = gmtCreate;
     }
 
-    public String getTaskPacketNo() {
-        return taskPacketNo;
+    public String getGmtModified() {
+        return gmtModified;
     }
 
-    public void setTaskPacketNo(String taskPacketNo) {
-        this.taskPacketNo = taskPacketNo;
+    public void setGmtModified(String gmtModified) {
+        this.gmtModified = gmtModified;
     }
 }
