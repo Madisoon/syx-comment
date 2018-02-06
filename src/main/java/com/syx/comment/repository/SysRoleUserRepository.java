@@ -17,5 +17,5 @@ public interface SysRoleUserRepository extends JpaRepository<SysRoleUser, Long> 
      * @param userName
      * @return
      */
-    SysRoleUser findSysRoleUserByUserId(String userName);
+    SysRoleUser findSysRoleUserByUserAccount(String userName);
 }

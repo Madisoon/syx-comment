@@ -26,17 +26,17 @@ public class SysUser {
     @Column(name = "user_name")
     private String userName;
 
-    @Column(name = "user_password")
-    private String userPassword;
-
     @Column(name = "user_phone")
     private String userPhone;
 
-    @Column(name = "is_using")
-    private int isUsing = 1;
+    @Column(name = "user_password")
+    private String userPassword;
 
-    @Column(name = "user_integration")
-    private int userIntegration;
+    @Column(name = "user_dep")
+    private Long userDep;
+
+    @Column(name = "packet_no")
+    private Long packetNo;
 
     @Column(name = "gmt_create")
     private Date gmtCreate;
@@ -76,14 +76,6 @@ public class SysUser {
         this.userName = userName;
     }
 
-    public String getUserPassword() {
-        return userPassword;
-    }
-
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
-    }
-
     public String getUserPhone() {
         return userPhone;
     }
@@ -92,20 +84,28 @@ public class SysUser {
         this.userPhone = userPhone;
     }
 
-    public int getIsUsing() {
-        return isUsing;
+    public String getUserPassword() {
+        return userPassword;
     }
 
-    public void setIsUsing(int isUsing) {
-        this.isUsing = isUsing;
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
-    public int getUserIntegration() {
-        return userIntegration;
+    public Long getUserDep() {
+        return userDep;
     }
 
-    public void setUserIntegration(int userIntegration) {
-        this.userIntegration = userIntegration;
+    public void setUserDep(Long userDep) {
+        this.userDep = userDep;
+    }
+
+    public Long getPacketNo() {
+        return packetNo;
+    }
+
+    public void setPacketNo(Long packetNo) {
+        this.packetNo = packetNo;
     }
 
     public Date getGmtCreate() {

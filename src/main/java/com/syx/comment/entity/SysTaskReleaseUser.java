@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 @Entity
-@Table(name = "sys_task_release_department")
+@Table(name = "sys_task_release_user")
 public class SysTaskReleaseUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +22,10 @@ public class SysTaskReleaseUser {
     private Long taskReleaseId;
 
     @Column(name = "receiver_account")
-    private Long receiverAccount;
+    private String receiverAccount;
 
     @Column(name = "user_account")
-    private Long userAccount;
+    private String userAccount;
 
     @Column(name = "gmt_create")
     private Date gmtCreate;
@@ -49,19 +49,19 @@ public class SysTaskReleaseUser {
         this.taskReleaseId = taskReleaseId;
     }
 
-    public Long getReceiverAccount() {
+    public String getReceiverAccount() {
         return receiverAccount;
     }
 
-    public void setReceiverAccount(Long receiverAccount) {
+    public void setReceiverAccount(String receiverAccount) {
         this.receiverAccount = receiverAccount;
     }
 
-    public Long getUserAccount() {
+    public String getUserAccount() {
         return userAccount;
     }
 
-    public void setUserAccount(Long userAccount) {
+    public void setUserAccount(String userAccount) {
         this.userAccount = userAccount;
     }
 

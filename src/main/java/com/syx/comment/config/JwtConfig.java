@@ -14,12 +14,13 @@ import java.util.Date;
 
 /*
  * Created by Msater Zg on 2017/3/13.  jwt实现方式
+ *
  * */
 
 
 @Component
 public class JwtConfig {
-    public static Claims parseJWT(String jsonWebToken, String base64Security) {
+    public Claims parseJWT(String jsonWebToken, String base64Security) {
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(DatatypeConverter.parseBase64Binary(base64Security))
@@ -30,7 +31,7 @@ public class JwtConfig {
         }
     }
 
-    public static String createJWT(JSONObject userData, String audience, String issuer, long TTLMillis, String base64Security) {
+    public String createJWT(JSONObject userData, String audience, String issuer, long TTLMillis, String base64Security) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
         long nowMillis = System.currentTimeMillis();
@@ -42,11 +43,16 @@ public class JwtConfig {
 
         //添加构成JWT的参数
         JwtBuilder builder = Jwts.builder().setHeaderParam("typ", "JWT")
-                .setIssuedAt(now)  //创建时间
-                .setSubject(userData.toString()) //主题，也差不多是个人的一些信息
-                .setIssuer(issuer) //发送谁
-                .setAudience(audience) //个人签名
-                .signWith(signatureAlgorithm, signingKey);  //估计是第三段密钥
+                //创建时间
+                .setIssuedAt(now)
+                //主题，也差不多是个人的一些信息
+                .setSubject(userData.toString())
+                //发送谁
+                .setIssuer(issuer)
+                //系统密钥
+                .setAudience(audience)
+                //估计是第三段密钥
+                .signWith(signatureAlgorithm, signingKey);
         //添加Token过期时间
         if (TTLMillis >= 0) {
             // 过期时间

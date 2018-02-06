@@ -40,8 +40,17 @@ public interface DepartmentManageService {
 
     /**
      * 判断该部门是否已有编号
+     *
      * @param depNo
      * @return
      */
     SysDepartment getDepartmentByDepNo(String depNo);
+
+    /**
+     * 根据部门编号获取部门的人员信息
+     *
+     * @param depNo
+     * @return
+     */
+    JSONArray listDepartmentUserByDepNo(String depNo);
 }

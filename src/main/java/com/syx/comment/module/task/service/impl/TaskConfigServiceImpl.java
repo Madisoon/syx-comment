@@ -33,7 +33,7 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     SysTaskReleaseRepository sysTaskReleaseRepository;
 
     @Autowired
-    SysTaskReleaseDepartmentRepository sysTaskReleaseDepartmentRepository;
+    SysTaskReleaseUserRepository sysTaskReleaseUserRepository;
 
     @Autowired
     SysReadTabRepository sysReadTabRepository;
@@ -42,54 +42,59 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     SysFinishTabRepository sysFinishTabRepository;
 
     @Autowired
+    SysUserRepository sysUserRepository;
+
+    @Autowired
     BaseDao baseDao;
 
     @Override
     public SysTaskConfig saveTaskConfigInformation(SysTaskConfig sysTaskConfig) {
-        sysTaskConfig.setTaskTime(new Date());
+        sysTaskConfig.setGmtCreate(new Date());
+        sysTaskConfig.setGmtModified(new Date());
         return sysTaskConfigRepository.save(sysTaskConfig);
     }
 
     @Override
     public List<SysTaskConfig> getTaskConfigByPacketNo(String packetNo) {
-        return sysTaskConfigRepository.findSysTaskConfigByTaskPacketNo(Long.valueOf(packetNo));
+        return sysTaskConfigRepository.findSysTaskConfigByPacketNo(Long.valueOf(packetNo));
     }
 
     @Override
-    public SysTaskRelease saveTaskReleaseInformation(SysTaskRelease sysTaskRelease, String taskDep) {
-        sysTaskRelease.setTaskCreateTime(new Date());
+    public SysTaskRelease saveTaskReleaseInformation(SysTaskRelease sysTaskRelease, String userId) {
+        System.out.println("打印");
+        System.out.println(userId);
+        sysTaskRelease.setGmtCreate(new Date());
+        sysTaskRelease.setGmtModified(new Date());
         sysTaskRelease = sysTaskReleaseRepository.save(sysTaskRelease);
         Long taskReleaseId = sysTaskRelease.getId();
-        String sqlDelete = "DELETE FROM sys_task_release_department WHERE task_release_id = ?";
+        String sqlDelete = "DELETE FROM sys_task_release_user WHERE task_release_id = ?";
         baseDao.execute(sqlDelete, new String[]{String.valueOf(taskReleaseId)});
-        if (!"".equals(taskDep)) {
-            String[] taskDepS = taskDep.split(",");
-            int taskDepSLen = taskDepS.length;
-            for (int i = 0; i < taskDepSLen; i++) {
-                String depNo = taskDepS[i];
-                SysTaskReleaseUser sysTaskReleaseDepartment = new SysTaskReleaseUser();
-                sysTaskReleaseDepartment.setDepNo(Long.parseLong(depNo));
-                sysTaskReleaseDepartment.setTaskReleaseId(taskReleaseId);
-                sysTaskReleaseDepartmentRepository.save(sysTaskReleaseDepartment);
+        if (!"".equals(userId)) {
+            String[] userIdS = userId.split(",");
+            int userIdSLen = userIdS.length;
+            for (int i = 0; i < userIdSLen; i++) {
+                SysUser sysUser = sysUserRepository.findOne(Long.parseLong(userIdS[i]));
+                SysTaskReleaseUser sysTaskReleaseUser = new SysTaskReleaseUser();
+                sysTaskReleaseUser.setTaskReleaseId(taskReleaseId);
+                sysTaskReleaseUser.setReceiverAccount(sysUser.getUserAccount());
+                sysTaskReleaseUser.setGmtCreate(new Date());
+                sysTaskReleaseUser.setGmtModified(new Date());
+                sysTaskReleaseUserRepository.save(sysTaskReleaseUser);
             }
         }
         return sysTaskRelease;
     }
 
     @Override
-    public JSONObject getTaskReleaseInformation(String sysPacketNo, String pageNumber, String pageSize) {
-        String selectSqlTotal = "SELECT * FROM sys_task_release a WHERE task_packet_no = '" + sysPacketNo + "' ";
-        String selectSql = "SELECT a.*,COUNT(b.id) AS dep_number,GROUP_CONCAT(b.dep_no) as dep_nos FROM " +
-                "(SELECT a.*,b.task_config_name FROM sys_task_release a ,sys_task_config b  " +
-                "WHERE  a.task_config_id = b.id AND a.task_packet_no = '" + sysPacketNo + "'  ORDER BY a.task_create_time DESC  " + SqlEasy.limitPage(pageSize, pageNumber) + " ) a " +
-                "LEFT JOIN sys_task_release_department b ON a.id = b.task_release_id GROUP BY a.id ";
-        List<Map<String, String>> listTotal = baseDao.rawQuery(selectSqlTotal);
-        List<Map<String, String>> list = baseDao.rawQuery(selectSql);
+    public JSONArray getTaskReleaseInformation(String userAccount) {
+        String sql = "SELECT a.*,GROUP_CONCAT(b.receiver_account) AS receiver_accounts  " +
+                "FROM (SELECT a.*,b.task_config_name FROM sys_task_release a ,sys_task_config b WHERE  " +
+                "a.user_account = ? AND a.task_config_id = b.id ) a  " +
+                "LEFT JOIN sys_task_release_user b " +
+                "ON a.id = b.task_release_id GROUP BY a.id ";
+        List list = baseDao.rawQuery(sql, new String[]{userAccount});
         JSONArray jsonArray = (JSONArray) JSON.toJSON(list);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("total", listTotal.size());
-        jsonObject.put("data", jsonArray);
-        return jsonObject;
+        return jsonArray;
     }
 
     @Override
@@ -97,13 +102,13 @@ public class TaskConfigServiceImpl implements TaskConfigService {
         String[] taskDepS = taskDep.split(",");
         int taskDepSLen = taskDepS.length;
         List<SysTaskReleaseUser> list = new ArrayList<>();
-        for (int i = 0; i < taskDepSLen; i++) {
+        /*for (int i = 0; i < taskDepSLen; i++) {
             SysTaskReleaseUser sysTaskReleaseDepartment = new SysTaskReleaseUser();
             sysTaskReleaseDepartment.setTaskReleaseId(Long.parseLong(taskId));
             sysTaskReleaseDepartment.setDepNo(Long.parseLong(taskDepS[i]));
             list.add(sysTaskReleaseDepartment);
-        }
-        list = sysTaskReleaseDepartmentRepository.save(list);
+        }*/
+        list = sysTaskReleaseUserRepository.save(list);
         return list;
     }
 
@@ -169,7 +174,7 @@ public class TaskConfigServiceImpl implements TaskConfigService {
         } else {
             SysFinishTab sysFinishTab = new SysFinishTab();
             sysFinishTab.setTaskId(Long.parseLong(taskReleaseId));
-            sysFinishTab.setUserName(userName);
+            sysFinishTab.setUserAccount(userName);
             sysFinishTabRepository.save(sysFinishTab);
         }
         JSONObject jsonObject = new JSONObject();

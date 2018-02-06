@@ -1,6 +1,7 @@
 package com.syx.comment.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 描述:
@@ -23,10 +24,10 @@ public class SysRoleUser {
     private String userAccount;
 
     @Column(name = "gmt_create")
-    private String gmtCreate;
+    private Date gmtCreate;
 
     @Column(name = "gmt_modified")
-    private String gmtModified;
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -52,19 +53,19 @@ public class SysRoleUser {
         this.userAccount = userAccount;
     }
 
-    public String getGmtCreate() {
+    public Date getGmtCreate() {
         return gmtCreate;
     }
 
-    public void setGmtCreate(String gmtCreate) {
+    public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
     }
 
-    public String getGmtModified() {
+    public Date getGmtModified() {
         return gmtModified;
     }
 
-    public void setGmtModified(String gmtModified) {
+    public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
     }
 }

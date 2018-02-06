@@ -55,25 +55,28 @@ public class UserManageServiceImpl implements UserManageService {
 
     @Override
     public JSONObject judgeUser(String userName, String userPassword) {
-        SysUser sysUser = sysUserRepository.findSysUserByUserName(userName);
+        SysUser sysUser = sysUserRepository.findSysUserByUserAccount(userName);
         JSONObject jsonObject = new JSONObject();
         if (sysUser == null) {
             jsonObject.put("result", 0);
         } else {
-            SysPacket sysPacket = sysPacketRepository.findSysPacketByPacketNo(sysUser.getUserPacketNo());
+            SysPacket sysPacket = sysPacketRepository.findSysPacketByPacketNo(sysUser.getPacketNo().toString());
             Boolean flag = true;
             if (sysPacket != null) {
                 flag = sysPacket.getPacketEndTime().getTime() >= System.currentTimeMillis();
             }
             if (flag) {
-                if (userPassword.equals(sysUser.getUserPwd())) {
+                if (userPassword.equals(sysUser.getUserPassword())) {
                     jsonObject.put("result", 1);
-                    String sql = "SELECT a.user_name AS userName, a.user_nick_name AS userNickName, a.user_phone AS userPhone, " +
-                            "a.user_dep AS userDep, a.user_packet_no AS userPacketNo,b.id AS roleId , a.id ,b.role_name " +
+                    String sql = "SELECT a.user_account AS userAccount, a.user_token AS userToken, a.user_name AS userNickName, a.user_phone AS userPhone, " +
+                            "a.user_dep AS userDep, a.packet_no AS packetNo,b.id AS roleId , a.id ,b.role_name " +
                             "AS roleName FROM sys_user a ,sys_role b ,sys_role_user c  " +
-                            "WHERE a.user_name = c.user_id AND b.id = c.role_id " +
-                            "AND a.user_name = ? ";
+                            "WHERE a.user_account = c.user_account AND b.id = c.role_id " +
+                            "AND a.user_account = ? ";
                     JSONObject jsonObjectUser = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(sql, new String[]{userName}));
+                    String token = jwtConfig.createJWT(jsonObjectUser, "syx", "sys-comment", 15000000, "19950108wa!");
+                    sysUser.setUserToken(token);
+                    sysUserRepository.save(sysUser);
                     jsonObject.put("user", jsonObjectUser);
                 } else {
                     jsonObject.put("result", 0);
@@ -86,22 +89,22 @@ public class UserManageServiceImpl implements UserManageService {
     }
 
     @Override
-    public JSONObject getUserInformation(String userName) {
+    public JSONObject getUserInformation(String userAccount) {
         JSONObject returnJson = new JSONObject();
         List<String> listModule = new ArrayList<>();
-        listModule.add("SELECT f.menu_id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
+        listModule.add("SELECT f.id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
         listModule.add("FROM sys_user a,sys_role_user b,sys_role c,sys_role_menu d,sys_menu f  ");
-        listModule.add("WHERE a.user_name = '" + userName + "'  ");
-        listModule.add("AND a.user_name = b.user_id AND b.role_id = c.id  ");
-        listModule.add("AND b.role_id = d.role_id AND d.menu_id = f.menu_id  ");
+        listModule.add("WHERE a.user_account = '" + userAccount + "'  ");
+        listModule.add("AND a.user_account = b.user_account AND b.role_id = c.id  ");
+        listModule.add("AND b.role_id = d.role_id AND d.menu_id = f.id  ");
         listModule.add("AND f.menu_pid = 0 ORDER BY f.menu_sort ");
         List<String> listFunction = new ArrayList<>();
-        listFunction.add("SELECT a.*,b.menu_name AS menu_parent_name,b.menu_attr AS menu_parent_attr FROM (SELECT f.menu_id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
+        listFunction.add("SELECT a.*,b.menu_name AS menu_parent_name,b.menu_attr AS menu_parent_attr FROM (SELECT f.id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
         listFunction.add("FROM sys_user a,sys_role_user b,sys_role c,sys_role_menu d,sys_menu f  ");
-        listFunction.add(" WHERE a.user_name = '" + userName + "'  ");
-        listFunction.add(" AND a.user_name = b.user_id AND b.role_id = c.id  ");
-        listFunction.add("AND b.role_id = d.role_id AND d.menu_id = f.menu_id  ");
-        listFunction.add("AND f.menu_pid <> 0) a LEFT JOIN sys_menu b ON a.menu_pid = b.menu_id ");
+        listFunction.add(" WHERE a.user_account = '" + userAccount + "'  ");
+        listFunction.add(" AND a.user_account = b.user_account AND b.role_id = c.id  ");
+        listFunction.add("AND b.role_id = d.role_id AND d.menu_id = f.id  ");
+        listFunction.add("AND f.menu_pid <> 0) a LEFT JOIN sys_menu b ON a.menu_pid = b.id ");
         String listModuleString = StringUtils.join(listModule, "");
         String listFunctionString = StringUtils.join(listFunction, "");
         List<Map<String, String>> execResultModule = baseDao.rawQuery(listModuleString);
@@ -112,7 +115,7 @@ public class UserManageServiceImpl implements UserManageService {
         for (int i = 0, len = jsonArrayModule.size(); i < len; i++) {
             JSONObject jsModule = jsonArrayModule.getJSONObject(i);
             JSONArray arryObject = new JSONArray();
-            String menu_id = jsModule.getString("menu_id");
+            String menu_id = jsModule.getString("id");
             for (int j = 0, lenF = jsonArrayFunction.size(); j < lenF; j++) {
                 JSONObject jsFunction = jsonArrayFunction.getJSONObject(j);
                 if (menu_id.equals(jsFunction.getString("menu_pid"))) {
@@ -129,8 +132,8 @@ public class UserManageServiceImpl implements UserManageService {
 
     @Override
     public SysUser saveUserInformation(SysUser sysUser, String roleType) {
-        sysUser.setUserCreateTime(new Date());
-        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserId(sysUser.getUserName());
+        sysUser.setGmtCreate(new Date());
+        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserAccount(sysUser.getUserName());
         if (sysRoleUser == null) {
             sysRoleUser = new SysRoleUser();
             if (ROLE_TYPE.equals(roleType)) {
@@ -138,7 +141,7 @@ public class UserManageServiceImpl implements UserManageService {
             } else {
                 sysRoleUser.setRoleId(Long.parseLong("5"));
             }
-            sysRoleUser.setUserId(sysUser.getUserName());
+            sysRoleUser.setUserAccount(sysUser.getUserName());
             sysRoleUserRepository.save(sysRoleUser);
         }
         return sysUserRepository.save(sysUser);
@@ -176,7 +179,7 @@ public class UserManageServiceImpl implements UserManageService {
     public JSONObject getUserInformationByDep(String roleType, String sysPacketNo, String depNo, String pageSize, String pageNumber) {
         JSONObject jsonObject = new JSONObject();
         if (ROLE_TYPE.equals(roleType)) {
-            String sqlTotal = "SELECT * FROM sys_user a WHERE a.user_dep = ? AND a.user_packet_no = ? ORDER BY a.user_create_time DESC ";
+            String sqlTotal = "SELECT * FROM sys_user a WHERE a.user_dep = ? AND a.packet_no = ? ORDER BY a.gmt_create DESC ";
             String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
             List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{depNo, sysPacketNo});
             JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{depNo, sysPacketNo}));
@@ -184,9 +187,9 @@ public class UserManageServiceImpl implements UserManageService {
             jsonObject.put("data", jsonArray);
         } else {
             String sqlTotal = "SELECT a.* FROM sys_user a, sys_role_user b  " +
-                    "WHERE a.user_packet_no = ?   " +
-                    "AND a.user_name = b.user_id AND b.role_id = '5' " +
-                    "ORDER BY a.user_create_time DESC ";
+                    "WHERE a.packet_no = ?   " +
+                    "AND a.user_account = b.user_account AND b.role_id = '5' " +
+                    "ORDER BY a.gmt_create DESC ";
             String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
             List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo});
             JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{sysPacketNo}));

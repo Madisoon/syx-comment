@@ -7,15 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by Msater Zg on 2017/4/5.
- * 拦截器
+ * @author Msater Zg
+ *         拦截器
  */
 
 public class ApiInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        /*// 开始请求拦截，只有返回true，才会往下面进行
-        String webToken = request.getHeader("webToken");
+        // 开始请求拦截，只有返回true，才会往下面进行
+        /*String webToken = request.getHeader("webToken");
         if (request.getHeader("webToken") == null) {
             return false;
         } else {

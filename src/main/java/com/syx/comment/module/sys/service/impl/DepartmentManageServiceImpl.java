@@ -13,6 +13,7 @@ import com.syx.comment.repository.SysUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,16 +41,16 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
 
     @Override
     public SysDepartment saveDepartmentInformation(SysDepartment sysDepartment, SysUser sysUser) {
-        sysDepartment.setDepCreateTime(new Date());
+        sysDepartment.setGmtCreate(new Date());
         SysDepartment sysDepartmentReturn = sysDepartmentRepository.save(sysDepartment);
-        sysUser.setUserNickName("admin");
-        sysUser.setUserCreateTime(new Date());
+        sysUser.setUserName("admin");
+        sysUser.setGmtCreate(new Date());
         sysUserRepository.save(sysUser);
-        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserId(sysUser.getUserName());
+        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserAccount(sysUser.getUserAccount());
         if (sysRoleUser == null) {
             sysRoleUser = new SysRoleUser();
             sysRoleUser.setRoleId(Long.parseLong("3"));
-            sysRoleUser.setUserId(sysUser.getUserName());
+            sysRoleUser.setUserAccount(sysUser.getUserAccount());
             sysRoleUserRepository.save(sysRoleUser);
         }
         return sysDepartmentReturn;
@@ -57,11 +58,11 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
 
     @Override
     public JSONArray getDepartmentInformation(String depPacketNo) {
-        String sql = " SELECT a.id ,a.dep_no AS depNo,a.dep_name AS depName,b.user_name AS userName,  " +
-                "b.user_pwd AS userPwd,b.id AS userId  " +
+        String sql = " SELECT a.id ,a.dep_no AS depNo,a.dep_name AS depName,b.user_account AS userAccount,  " +
+                "b.user_password AS userPassword,b.id AS userId  " +
                 "FROM sys_department a LEFT JOIN sys_user b ON  a.dep_no = b.user_dep  " +
-                "LEFT JOIN sys_role_user c ON b.user_name=c.user_id " +
-                "WHERE a.dep_packet_no = ? AND a.dep_no = b.user_dep  AND c.role_id = '3'";
+                "LEFT JOIN sys_role_user c ON b.user_account=c.user_account " +
+                "WHERE a.packet_no = ? AND a.dep_no = b.user_dep  AND c.role_id = '3'";
         JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sql, new String[]{depPacketNo}));
         return jsonArray;
     }
@@ -90,5 +91,30 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     @Override
     public SysDepartment getDepartmentByDepNo(String depNo) {
         return sysDepartmentRepository.findSysDepartmentByDepNo(depNo);
+    }
+
+    @Override
+    public JSONArray listDepartmentUserByDepNo(String depNo) {
+        String sql = "";
+        List list = new ArrayList(16);
+        if ("".equals(depNo)) {
+            sql = "SELECT b.user_name ,b.user_dep AS dep_pid, b.id " +
+                    "FROM  sys_department a ,sys_user b " +
+                    "WHERE a.dep_no = b.user_dep " +
+                    "UNION " +
+                    "SELECT dep_name AS user_name ,id = 0 AS dep_pid ,dep_no AS id  " +
+                    "FROM  sys_department ";
+            list = baseDao.rawQuery(sql);
+        } else {
+            sql = "SELECT b.user_name ,b.user_dep AS dep_pid, b.id " +
+                    "FROM  sys_department a ,sys_user b " +
+                    "WHERE a.dep_no = b.user_dep AND b.user_dep = ? " +
+                    "UNION " +
+                    "SELECT dep_name AS user_name ,id = 0 AS dep_pid ,dep_no AS id  " +
+                    "FROM  sys_department  WHERE dep_no = ? ";
+            list = baseDao.rawQuery(sql, new String[]{depNo, depNo});
+        }
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(list);
+        return jsonArray;
     }
 }

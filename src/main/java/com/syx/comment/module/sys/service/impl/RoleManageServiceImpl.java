@@ -62,11 +62,11 @@ public class RoleManageServiceImpl implements RoleManageService {
         List<String> roleMenuSqlList = new ArrayList<>();
         roleMenuSqlList.add("SELECT * FROM ");
         roleMenuSqlList.add("(SELECT a.*,b.menu_name AS menu_first_name FROM sys_menu a,sys_menu b  ");
-        roleMenuSqlList.add("WHERE a.menu_pid<>0 AND a.menu_pid = b.menu_id) a  ");
+        roleMenuSqlList.add("WHERE a.menu_pid<>0 AND a.menu_pid = b.id) a  ");
         roleMenuSqlList.add("LEFT JOIN ");
         roleMenuSqlList.add("(SELECT b.menu_id AS judge_menu_id FROM sys_role a,sys_role_menu b  ");
         roleMenuSqlList.add("WHERE a.id = b.role_id AND a.id = ? ) b  ");
-        roleMenuSqlList.add("ON a.menu_id = b.judge_menu_id  ORDER BY a.menu_name ");
+        roleMenuSqlList.add("ON a.id = b.judge_menu_id  ORDER BY a.menu_name ");
         String roleMenuSql = StringUtils.join(roleMenuSqlList, "");
         List<Map<String, String>> listRoleData = baseDao.rawQuery(roleMenuSql, new String[]{id});
         JSONArray jsonArrayRoleMenu = (JSONArray) JSON.toJSON(listRoleData);
@@ -75,7 +75,7 @@ public class RoleManageServiceImpl implements RoleManageService {
         for (int i = 0; i < jsonArrayRoleLen; i++) {
             JSONObject jsonObjectRole = jsonArrayRole.getJSONObject(i);
             JSONArray jsonArray = new JSONArray();
-            String menu_id = jsonObjectRole.getString("menu_id");
+            String menu_id = jsonObjectRole.getString("id");
             for (int j = 0; j < jsonArrayRoleMenuLen; j++) {
                 JSONObject jsonObjectRoleMenu = jsonArrayRoleMenu.getJSONObject(j);
                 if (menu_id.equals(jsonObjectRoleMenu.getString("menu_pid"))) {
@@ -105,7 +105,7 @@ public class RoleManageServiceImpl implements RoleManageService {
             //取消的逻辑的逻辑
             String deleteSql = "DELETE FROM sys_role_menu WHERE role_id = ? AND menu_id = ? ";
             result = baseDao.execute(deleteSql, new String[]{roleId, menuId});
-            String selectSql = "SELECT * FROM sys_menu a ,sys_role_menu b WHERE a.menu_pid = ? AND a.menu_id = b.menu_id AND b.role_id= ? ";
+            String selectSql = "SELECT * FROM sys_menu a ,sys_role_menu b WHERE a.menu_pid = ? AND a.id = b.menu_id AND b.role_id= ? ";
             List<Map<String, String>> list = baseDao.rawQuery(selectSql, new String[]{menuPid, roleId});
             if (list.size() == 0) {
                 deleteSql = "DELETE FROM sys_role_menu WHERE role_id = ? AND menu_id = ? ";
@@ -142,7 +142,7 @@ public class RoleManageServiceImpl implements RoleManageService {
     @Override
     public JSONArray getUserRole(String roleId) {
         JSONArray jsonArray = new JSONArray();
-        String getUserRoleSql = "SELECT b.* FROM sys_role_user a,sys_user b WHERE a.role_id = ? AND a.user_id = b.user_name";
+        String getUserRoleSql = "SELECT b.* FROM sys_role_user a,sys_user b WHERE a.role_id = ? AND a.user_account = b.user_account";
         List<Map<String, String>> list = new ArrayList<>();
         list = baseDao.rawQuery(getUserRoleSql, new String[]{roleId});
         jsonArray = (JSONArray) JSON.toJSON(list);

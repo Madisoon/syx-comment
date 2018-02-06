@@ -16,13 +16,14 @@ public interface SysUserRepository extends JpaRepository<SysUser, Long> {
     /**
      * 根据登陆名称获取个人信息
      *
-     * @param userName
+     * @param userAccount
      * @return
      */
-    SysUser findSysUserByUserName(String userName);
+    SysUser findSysUserByUserAccount(String userAccount);
 
     /**
      * 根据部门获取部门用户
+     *
      * @param userDep
      * @return
      */

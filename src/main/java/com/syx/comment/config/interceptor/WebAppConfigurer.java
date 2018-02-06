@@ -15,9 +15,9 @@ public class WebAppConfigurer extends WebMvcConfigurerAdapter {
         // 注册拦截器
         InterceptorRegistration interceptorRegistration = registry.addInterceptor(new ApiInterceptor());
         // 配置拦截的路径
-       /* ir.addPathPatterns("/api*//**");*/
+        interceptorRegistration.addPathPatterns("/api*");
         // 配置不拦截的路径
-        /*ir.excludePathPatterns("*//**.html");*/
+        interceptorRegistration.excludePathPatterns("*.html");
 
         // 还可以在这里注册其它的拦截器
         /*registry.addInterceptor(new OtherInterceptor()).addPathPatterns("*//**");*/

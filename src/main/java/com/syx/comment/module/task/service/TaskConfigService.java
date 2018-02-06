@@ -1,5 +1,6 @@
 package com.syx.comment.module.task.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysTaskConfig;
 import com.syx.comment.entity.SysTaskRelease;
@@ -43,12 +44,10 @@ public interface TaskConfigService {
     /**
      * 分页得到任务的信息
      *
-     * @param sysPacketNo
-     * @param pageNumber
-     * @param pageSize
+     * @param userAccount
      * @return
      */
-    JSONObject getTaskReleaseInformation(String sysPacketNo, String pageNumber, String pageSize);
+    JSONArray getTaskReleaseInformation(String userAccount);
 
     /**
      * 保存任务适用部门的信息
@@ -108,9 +107,10 @@ public interface TaskConfigService {
 
     /**
      * 根据发布的任务，和部门编号获取任务的详情
+     *
      * @param taskNumber
      * @param depNo
      * @return
      */
-    JSONObject getTaskReleaseByNumber(String taskNumber , String depNo);
+    JSONObject getTaskReleaseByNumber(String taskNumber, String depNo);
 }

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,27 +48,33 @@ public class PacketManageServiceImpl implements PacketManageService {
     @Override
     public SysPacket savePacketInformation(SysPacket sysPacket, SysUser sysUser, String areaId) {
         // 添加默认值
-        sysPacket.setPacketStatus(1);
-        sysPacket.setPacketStartTime(new Date());
+        sysPacket.setIsUsing(1);
+        sysPacket.setGmtCreate(new Date());
+        sysPacket.setGmtModified(new Date());
         SysPacket sysPacketReturn = sysPacketRepository.save(sysPacket);
         // 用户添加默认值
-        sysUser.setUserPacketNo(sysPacket.getPacketNo());
-        sysUser.setUserNickName("admin");
-        sysUser.setUserCreateTime(new Date());
+        sysUser.setPacketNo(Long.parseLong(sysPacket.getPacketNo()));
+        sysUser.setUserName("admin");
+        sysUser.setGmtCreate(new Date());
+        sysUser.setGmtModified(new Date());
         sysUserRepository.save(sysUser);
         SysAreaPacket sysAreaPacket = sysAreaPacketRepository.findSysAreaByPacketId(sysPacketReturn.getId());
         if (sysAreaPacket == null) {
             sysAreaPacket = new SysAreaPacket();
             sysAreaPacket.setAreaId(Long.valueOf(areaId));
             sysAreaPacket.setPacketId(sysPacketReturn.getId());
+            sysAreaPacket.setGmtModified(new Date());
+            sysAreaPacket.setGmtCreate(new Date());
             sysAreaPacketRepository.save(sysAreaPacket);
         }
 
-        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserId(sysUser.getUserName());
+        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserAccount(sysUser.getUserAccount());
         if (sysRoleUser == null) {
             sysRoleUser = new SysRoleUser();
             sysRoleUser.setRoleId(Long.parseLong("2"));
-            sysRoleUser.setUserId(sysUser.getUserName());
+            sysRoleUser.setUserAccount(sysUser.getUserAccount());
+            sysRoleUser.setGmtModified(new Date());
+            sysRoleUser.setGmtCreate(new Date());
             sysRoleUserRepository.save(sysRoleUser);
         }
         return sysPacketReturn;
@@ -85,9 +92,9 @@ public class PacketManageServiceImpl implements PacketManageService {
                 list.add(" OR c.area_id = " + areaIdS[i] + " ");
             }
         }
-        String sql = "SELECT a.*,b.user_name,b.user_pwd,b.id AS user_id FROM sys_packet a ,   " +
-                "sys_user b, sys_area_packet c, sys_role_user d  WHERE a.packet_no = b.user_packet_no  " +
-                "AND a.id=c.packet_id AND b.user_name = d.user_id AND d.role_id = '2'  AND  ( " + StringUtils.join(list, "") + " )";
+        String sql = "SELECT a.*,b.user_account,b.user_password,b.id AS user_id FROM sys_packet a ,   " +
+                "sys_user b, sys_area_packet c, sys_role_user d  WHERE a.packet_no = b.packet_no  " +
+                "AND a.id=c.packet_id AND b.user_account = d.user_account AND d.role_id = '2'  AND  ( " + StringUtils.join(list, "") + " )";
         JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sql));
         return jsonArray;
     }

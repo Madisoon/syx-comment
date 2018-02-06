@@ -102,5 +102,21 @@ public class DepartmentController {
         }
     }
 
+    @GetMapping(value = "/listDepartmentUserByDepNo")
+    @ApiOperation(value = "listDepartmentUserByDepNo", notes = "获取部门下面所有人员信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "depNo", value = "部门depNo", required = true, dataType = "String")
+    })
+    public ResponseEntity listDepartmentUserByDepNo(@RequestParam("depNo") String depNo) {
+        try {
+            JSONArray jsonArray = departmentManageService.listDepartmentUserByDepNo(depNo);
+            return ResponseEntity.ok().body(jsonArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
 
 }

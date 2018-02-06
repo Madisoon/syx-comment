@@ -18,5 +18,5 @@ public interface SysTaskConfigRepository extends JpaRepository<SysTaskConfig, Lo
      * @param packetNo
      * @return
      */
-    List<SysTaskConfig> findSysTaskConfigByTaskPacketNo(Long packetNo);
+    List<SysTaskConfig> findSysTaskConfigByPacketNo(Long packetNo);
 }

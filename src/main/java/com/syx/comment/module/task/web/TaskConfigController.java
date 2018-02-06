@@ -1,6 +1,7 @@
 package com.syx.comment.module.task.web;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysTaskConfig;
 import com.syx.comment.entity.SysTaskRelease;
@@ -105,16 +106,16 @@ public class TaskConfigController {
     @GetMapping(value = "/getTaskReleaseInformation")
     @ApiOperation(value = "getTaskReleaseInformation", notes = "发布任务")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "sysPacketNo", value = "系统编号", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "pageSize", value = "每一页的大小", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "pageNumber", value = "页数", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "userAccount", value = "系统编号", required = true, dataType = "STRING"),
+            /*@ApiImplicitParam(name = "pageSize", value = "每一页的大小", required = true, dataType = "STRING"),
+            @ApiImplicitParam(name = "pageNumber", value = "页数", required = true, dataType = "STRING")*/
     })
-    public ResponseEntity getTaskReleaseInformation(@RequestParam("sysPacketNo") String sysPacketNo,
+    public ResponseEntity getTaskReleaseInformation(@RequestParam("userAccount") String userAccount/*,
                                                     @RequestParam("pageSize") String pageSize,
-                                                    @RequestParam("pageNumber") String pageNumber) {
+                                                    @RequestParam("pageNumber") String pageNumber*/) {
         try {
-            JSONObject jsonObject = taskConfigService.getTaskReleaseInformation(sysPacketNo, pageNumber, pageSize);
-            return ResponseEntity.ok().body(jsonObject);
+            JSONArray jsonArray = taskConfigService.getTaskReleaseInformation(userAccount);
+            return ResponseEntity.ok().body(jsonArray);
         } catch (Exception e) {
             e.printStackTrace();
             ExecResult er = new ExecResult(false, e.getMessage());

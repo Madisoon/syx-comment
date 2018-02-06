@@ -35,6 +35,9 @@ public class SysTaskRelease {
     @Column(name = "user_account")
     private String userAccount;
 
+    @Column(name = "is_posted")
+    private int isPosted;
+
     @Column(name = "packet_no")
     private String packetNo;
 
@@ -42,10 +45,10 @@ public class SysTaskRelease {
     private String taskEndTime;
 
     @Column(name = "gmt_create")
-    private String gmtCreate;
+    private Date gmtCreate;
 
     @Column(name = "gmt_modified")
-    private String gmtModified;
+    private Date gmtModified;
 
     public Long getId() {
         return id;
@@ -119,19 +122,19 @@ public class SysTaskRelease {
         this.taskEndTime = taskEndTime;
     }
 
-    public String getGmtCreate() {
+    public Date getGmtCreate() {
         return gmtCreate;
     }
 
-    public void setGmtCreate(String gmtCreate) {
+    public void setGmtCreate(Date gmtCreate) {
         this.gmtCreate = gmtCreate;
     }
 
-    public String getGmtModified() {
+    public Date getGmtModified() {
         return gmtModified;
     }
 
-    public void setGmtModified(String gmtModified) {
+    public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
     }
 }
