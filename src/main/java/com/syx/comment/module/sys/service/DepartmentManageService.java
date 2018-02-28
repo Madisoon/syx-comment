@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.syx.comment.entity.SysDepartment;
 import com.syx.comment.entity.SysUser;
 
-import java.util.List;
-
 /**
  * 描述:
  * 系统用户管理——API
@@ -50,7 +48,8 @@ public interface DepartmentManageService {
      * 根据部门编号获取部门的人员信息
      *
      * @param depNo
+     * @param packetNo
      * @return
      */
-    JSONArray listDepartmentUserByDepNo(String depNo);
+    JSONArray listDepartmentUserByDepNo(String depNo, String packetNo);
 }

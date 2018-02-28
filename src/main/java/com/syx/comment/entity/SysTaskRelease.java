@@ -137,4 +137,12 @@ public class SysTaskRelease {
     public void setGmtModified(Date gmtModified) {
         this.gmtModified = gmtModified;
     }
+
+    public int getIsPosted() {
+        return isPosted;
+    }
+
+    public void setIsPosted(int isPosted) {
+        this.isPosted = isPosted;
+    }
 }

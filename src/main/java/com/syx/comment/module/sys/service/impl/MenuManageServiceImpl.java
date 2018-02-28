@@ -60,7 +60,7 @@ public class MenuManageServiceImpl implements MenuManageService {
 
     @Override
     public JSONObject deleteModule(String moduleId) {
-        String deleteModuleSql = "DELETE FROM sys_menu WHERE menu_id = ? OR menu_pid = ?";
+        String deleteModuleSql = "DELETE FROM sys_menu WHERE id = ? OR menu_pid = ?";
         String deleteMenuModuleSql = "DELETE FROM sys_role_menu WHERE menu_id = ?";
         int result = baseDao.execute(deleteModuleSql, new String[]{moduleId, moduleId});
         baseDao.execute(deleteMenuModuleSql, new String[]{moduleId});
@@ -82,10 +82,10 @@ public class MenuManageServiceImpl implements MenuManageService {
         String updateModuleSql = "";
         int result = 0;
         if ("".equals(menuContent)) {
-            updateModuleSql = "UPDATE sys_menu SET menu_name = ? WHERE menu_id = ? ";
+            updateModuleSql = "UPDATE sys_menu SET menu_name = ? WHERE id = ? ";
             result = baseDao.execute(updateModuleSql, new String[]{menuName, menuId});
         } else {
-            updateModuleSql = "UPDATE sys_menu SET menu_name = ?,menu_content = ? WHERE menu_id = ? ";
+            updateModuleSql = "UPDATE sys_menu SET menu_name = ?,menu_content = ? WHERE id = ? ";
             result = baseDao.execute(updateModuleSql, new String[]{menuName, menuContent, menuId});
         }
         JSONObject jsonObject = new JSONObject();

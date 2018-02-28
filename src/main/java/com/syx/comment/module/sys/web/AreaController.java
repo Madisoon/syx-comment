@@ -2,7 +2,6 @@ package com.syx.comment.module.sys.web;
 
 import com.alibaba.fastjson.JSON;
 import com.syx.comment.entity.SysArea;
-import com.syx.comment.entity.SysDepartment;
 import com.syx.comment.module.sys.service.impl.AreaManageServiceImpl;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

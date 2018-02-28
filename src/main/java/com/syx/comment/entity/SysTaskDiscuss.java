@@ -5,30 +5,23 @@ import java.util.Date;
 
 /**
  * 描述:
- * 消息通知的entity
+ * 任务评论的entity
  *
  * @author Msater Zg
- * @create 2018-02-05 9:07
+ * @create 2018-02-07 10:14
  */
-
 @Entity
-@Table(name = "sys_notice")
-public class SysNotice {
+@Table(name = "sys_task_discuss")
+public class SysTaskDiscuss {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "notice_type")
-    private int noticeType;
+    @Column(name = "task_id")
+    private Long taskId;
 
-    @Column(name = "notice_content")
-    private String noticeContent;
-
-    @Column(name = "notice_url")
-    private String noticeUrl;
-
-    @Column(name = "notice_receive")
-    private String noticeReceive;
+    @Column(name = "discuss_content")
+    private String discussContent;
 
     @Column(name = "user_account")
     private String userAccount;
@@ -47,36 +40,20 @@ public class SysNotice {
         this.id = id;
     }
 
-    public int getNoticeType() {
-        return noticeType;
+    public Long getTaskId() {
+        return taskId;
     }
 
-    public void setNoticeType(int noticeType) {
-        this.noticeType = noticeType;
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
     }
 
-    public String getNoticeContent() {
-        return noticeContent;
+    public String getDiscussContent() {
+        return discussContent;
     }
 
-    public void setNoticeContent(String noticeContent) {
-        this.noticeContent = noticeContent;
-    }
-
-    public String getNoticeUrl() {
-        return noticeUrl;
-    }
-
-    public void setNoticeUrl(String noticeUrl) {
-        this.noticeUrl = noticeUrl;
-    }
-
-    public String getNoticeReceive() {
-        return noticeReceive;
-    }
-
-    public void setNoticeReceive(String noticeReceive) {
-        this.noticeReceive = noticeReceive;
+    public void setDiscussContent(String discussContent) {
+        this.discussContent = discussContent;
     }
 
     public String getUserAccount() {

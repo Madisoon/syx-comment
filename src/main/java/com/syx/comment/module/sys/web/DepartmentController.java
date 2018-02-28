@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysDepartment;
-import com.syx.comment.entity.SysPacket;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.DepartmentManageService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -14,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * 描述:
@@ -105,11 +102,13 @@ public class DepartmentController {
     @GetMapping(value = "/listDepartmentUserByDepNo")
     @ApiOperation(value = "listDepartmentUserByDepNo", notes = "获取部门下面所有人员信息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "depNo", value = "部门depNo", required = true, dataType = "String")
+            @ApiImplicitParam(name = "depNo", value = "部门depNo", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "packetNo", value = "系统编号", required = true, dataType = "String")
     })
-    public ResponseEntity listDepartmentUserByDepNo(@RequestParam("depNo") String depNo) {
+    public ResponseEntity listDepartmentUserByDepNo(@RequestParam("depNo") String depNo,
+                                                    @RequestParam("packetNo") String packetNo) {
         try {
-            JSONArray jsonArray = departmentManageService.listDepartmentUserByDepNo(depNo);
+            JSONArray jsonArray = departmentManageService.listDepartmentUserByDepNo(depNo, packetNo);
             return ResponseEntity.ok().body(jsonArray);
         } catch (Exception e) {
             e.printStackTrace();

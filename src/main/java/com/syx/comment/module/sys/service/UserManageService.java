@@ -1,6 +1,5 @@
 package com.syx.comment.module.sys.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.syx.comment.entity.SysUser;
 
@@ -45,6 +44,13 @@ public interface UserManageService {
      * @return JSONObject
      */
     JSONObject deleteUserInformation(String userId);
+
+    /**
+     * 根据用户获取的他的身份特征信息
+     * @param userAccount
+     * @return
+     */
+    JSONObject getPersonInformationByUserAccount(String userAccount);
 
     /**
      * 根据角色和部门获取用户

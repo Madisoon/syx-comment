@@ -61,8 +61,6 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
     @Override
     public SysTaskRelease saveTaskReleaseInformation(SysTaskRelease sysTaskRelease, String userId) {
-        System.out.println("打印");
-        System.out.println(userId);
         sysTaskRelease.setGmtCreate(new Date());
         sysTaskRelease.setGmtModified(new Date());
         sysTaskRelease = sysTaskReleaseRepository.save(sysTaskRelease);
@@ -87,10 +85,11 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
     @Override
     public JSONArray getTaskReleaseInformation(String userAccount) {
-        String sql = "SELECT a.*,GROUP_CONCAT(b.receiver_account) AS receiver_accounts  " +
-                "FROM (SELECT a.*,b.task_config_name FROM sys_task_release a ,sys_task_config b WHERE  " +
-                "a.user_account = ? AND a.task_config_id = b.id ) a  " +
-                "LEFT JOIN sys_task_release_user b " +
+        String sql = "SELECT a.*,GROUP_CONCAT(b.receiver_account) AS receiver_accounts,GROUP_CONCAT(b.user_name) AS user_names " +
+                "FROM (SELECT a.*,b.task_config_name,b.task_color FROM sys_task_release a ,sys_task_config b WHERE   " +
+                "a.user_account = ? AND a.task_config_id = b.id ) a    " +
+                "LEFT JOIN (SELECT a.*,b.user_name FROM sys_task_release_user a ,sys_user b  " +
+                "WHERE a.receiver_account = b.user_account) b  " +
                 "ON a.id = b.task_release_id GROUP BY a.id ";
         List list = baseDao.rawQuery(sql, new String[]{userAccount});
         JSONArray jsonArray = (JSONArray) JSON.toJSON(list);
@@ -130,9 +129,12 @@ public class TaskConfigServiceImpl implements TaskConfigService {
         int taskIdSLen = taskIdS.length;
         List<SysTaskRelease> list = new ArrayList<>();
         for (int i = 0; i < taskIdSLen; i++) {
+            Long taskReleaseId = Long.parseLong(taskIdS[i]);
             SysTaskRelease sysTaskRelease = new SysTaskRelease();
-            sysTaskRelease.setId(Long.parseLong(taskIdS[i]));
+            sysTaskRelease.setId(taskReleaseId);
             list.add(sysTaskRelease);
+            List<SysTaskReleaseUser> userList = sysTaskReleaseUserRepository.findSysTaskReleaseUserByTaskReleaseId(taskReleaseId);
+            sysTaskReleaseUserRepository.delete(userList);
         }
         JSONObject jsonObject = new JSONObject();
         try {
@@ -145,20 +147,18 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public JSONObject getAllNoteInformation(String sysPacketNo, String depNo, String userName, String pageSize, String pageNumber) {
-        String sqlTotal = "SELECT a.*,b.id AS finish_id,c.id AS read_id FROM (SELECT a.*,c.task_config_name FROM sys_task_release a,    " +
-                "sys_task_release_department b,sys_task_config c   " +
-                "WHERE a.id = b.task_release_id AND a.task_config_id = c.id    " +
-                "AND a.task_packet_no = ?   " +
-                "AND b.dep_no = ? ORDER BY a.task_create_time DESC ) a  " +
-                "LEFT JOIN (SELECT * FROM sys_finish_tab WHERE user_name = ? ) b ON a.id = b.task_id " +
-                "LEFT JOIN (SELECT * FROM sys_read_tab WHERE user_name = ? ) c ON a.id = c.task_id   ";
+    public JSONObject getAllNoteInformation(String sysPacketNo, String userAccount, String pageSize, String pageNumber) {
+        String sqlTotal = " SELECT a.*,b.id AS finish_id,c.id AS read_id FROM (SELECT a.*,c.task_config_name FROM sys_task_release a, " +
+                " sys_task_release_user b,sys_task_config c  " +
+                " WHERE a.id = b.task_release_id AND a.task_config_id = c.id  " +
+                " AND a.packet_no = ? AND b.receiver_account = ? ORDER BY a.gmt_create DESC ) a  " +
+                " LEFT JOIN (SELECT * FROM sys_finish_tab WHERE user_account = ? ) b ON a.id = b.task_id  " +
+                " LEFT JOIN (SELECT * FROM sys_read_tab WHERE user_account = ? ) c ON a.id = c.task_id  ";
         String sqlSelect = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber) + "";
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, depNo, userName, userName}));
-        JSONArray jsonArrayTotal = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo, depNo, userName, userName}));
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, userAccount, userAccount, userAccount}));
+        JSONArray jsonArrayTotal = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo, userAccount, userAccount, userAccount}));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", jsonArray);
-        System.out.println(jsonArray);
         jsonObject.put("total", jsonArrayTotal.size());
         return jsonObject;
     }
@@ -196,11 +196,11 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public JSONObject getTaskReleaseByNumber(String taskNumber, String depNo) {
-        String selectSql = "SELECT * FROM sys_task_release a ,sys_task_release_department b " +
-                "WHERE a.id = b.task_release_id AND a.task_number = ? " +
-                "AND b.dep_no = ? AND a.task_finish_time >= ? ";
-        Map map = baseDao.rawQueryForMap(selectSql, new String[]{taskNumber, depNo, DateOrTimeUtil.getNowTimeByDifferentFormat("yyyy-MM-dd HH-mm")});
+    public JSONObject getTaskReleaseByNumber(String taskNumber, String userAccount) {
+        String selectSql = " SELECT * FROM sys_task_release a ,sys_task_release_user b  " +
+                " WHERE a.id = b.task_release_id AND a.task_number = ?  " +
+                " AND b.receiver_account = ? AND a.task_end_time >= ? ";
+        Map map = baseDao.rawQueryForMap(selectSql, new String[]{taskNumber, userAccount, DateOrTimeUtil.getNowTimeByDifferentFormat("yyyy-MM-dd HH-mm")});
         JSONObject jsonObject = new JSONObject();
         if (map == null) {
             jsonObject.put("result", 0);
@@ -210,5 +210,14 @@ public class TaskConfigServiceImpl implements TaskConfigService {
             jsonObject.put("data", jsonObjectMap);
         }
         return jsonObject;
+    }
+
+    @Override
+    public SysTaskRelease updateTaskReleaseStatus(String id) {
+        JSONObject jsonObject = new JSONObject();
+        SysTaskRelease sysTaskRelease = sysTaskReleaseRepository.getOne(Long.parseLong(id));
+        sysTaskRelease.setIsPosted(1);
+        sysTaskRelease = sysTaskReleaseRepository.save(sysTaskRelease);
+        return sysTaskRelease;
     }
 }

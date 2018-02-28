@@ -5,7 +5,6 @@ import com.syx.comment.module.sys.service.AreaManageService;
 import com.syx.comment.repository.SysAreaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.ls.LSInput;
 
 import java.util.ArrayList;
 import java.util.List;

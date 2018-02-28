@@ -1,6 +1,7 @@
 package com.syx.comment.module.task.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.syx.comment.entity.SysTaskDiscuss;
 import com.syx.comment.entity.SysTaskFinish;
 
 /**
@@ -30,13 +31,18 @@ public interface TaskPostService {
     /**
      * 根据部门获取信息
      *
-     * @param depNo
+     * @param userAccount
      * @param searchData
+     * @param taskType
+     * @param taskStatus
      * @param pageSize
      * @param pageNumber
+     * @param depNo
      * @return JSONObject
      */
-    JSONObject getDepTaskInformation(String depNo, String searchData, String pageSize, String pageNumber);
+    JSONObject getUserTaskInformation(String userAccount, String searchData,
+                                      String taskType, String taskStatus,
+                                      String pageSize, String pageNumber, String depNo);
 
     /**
      * 根据数据包获取审核信息
@@ -91,4 +97,31 @@ public interface TaskPostService {
      * @return
      */
     String exportExcelTaskRank(String sysPacketNo, String rankType, String searchData, String filePath);
+
+    /**
+     * 添加评论
+     *
+     * @param sysTaskDiscuss
+     * @return
+     */
+    SysTaskDiscuss saveTaskFinishDisCuss(SysTaskDiscuss sysTaskDiscuss);
+
+    /**
+     * 审核人员评论任务
+     *
+     * @param taskId
+     * @param taskMark
+     * @param userAccount
+     * @return
+     */
+    SysTaskFinish saveTaskFinishMark(String taskId, String taskMark, String userAccount);
+
+    /**
+     * 添加Stick
+     *
+     * @param taskId
+     * @param postType
+     * @return
+     */
+    SysTaskFinish saveTaskFinishStick(String taskId, String postType);
 }

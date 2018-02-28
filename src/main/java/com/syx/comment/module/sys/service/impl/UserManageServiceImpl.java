@@ -74,8 +74,10 @@ public class UserManageServiceImpl implements UserManageService {
                             "WHERE a.user_account = c.user_account AND b.id = c.role_id " +
                             "AND a.user_account = ? ";
                     JSONObject jsonObjectUser = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(sql, new String[]{userName}));
+                    JSONObject jsonObjectUserToken = new JSONObject();
+                    jsonObjectUserToken.put("userAccount", jsonObjectUser.getString("user_account"));
                     String token = jwtConfig.createJWT(jsonObjectUser, "syx", "sys-comment", 15000000, "19950108wa!");
-                    sysUser.setUserToken(token);
+                    sysUser.setUserToken("webtoken");
                     sysUserRepository.save(sysUser);
                     jsonObject.put("user", jsonObjectUser);
                 } else {
@@ -141,7 +143,7 @@ public class UserManageServiceImpl implements UserManageService {
             } else {
                 sysRoleUser.setRoleId(Long.parseLong("5"));
             }
-            sysRoleUser.setUserAccount(sysUser.getUserName());
+            sysRoleUser.setUserAccount(sysUser.getUserAccount());
             sysRoleUserRepository.save(sysRoleUser);
         }
         return sysUserRepository.save(sysUser);
@@ -197,5 +199,10 @@ public class UserManageServiceImpl implements UserManageService {
             jsonObject.put("data", jsonArray);
         }
         return jsonObject;
+    }
+
+    @Override
+    public JSONObject getPersonInformationByUserAccount(String userAccount) {
+        return null;
     }
 }

@@ -78,13 +78,12 @@ public interface TaskConfigService {
      * 根据系统编号和部门编号获取所有的通知
      *
      * @param sysPacketNo
-     * @param depNo
      * @param userName
      * @param pageSize
      * @param pageNumber
      * @return
      */
-    JSONObject getAllNoteInformation(String sysPacketNo, String depNo, String userName, String pageSize, String pageNumber);
+    JSONObject getAllNoteInformation(String sysPacketNo, String userName, String pageSize, String pageNumber);
 
     /**
      * 标记已读或者未读消息
@@ -109,8 +108,15 @@ public interface TaskConfigService {
      * 根据发布的任务，和部门编号获取任务的详情
      *
      * @param taskNumber
-     * @param depNo
+     * @param userAccount
      * @return
      */
-    JSONObject getTaskReleaseByNumber(String taskNumber, String depNo);
+    JSONObject getTaskReleaseByNumber(String taskNumber, String userAccount);
+
+    /**
+     * 发布任务
+     * @param id
+     * @return
+     */
+    SysTaskRelease updateTaskReleaseStatus(String id);
 }

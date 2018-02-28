@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SqlParamsComplexProcess extends BaseComplexProcess implements
-		IComplexProcess {
+        IComplexProcess {
 	public String Result;
 	public String WhereClause = "";
 	public List<String> SqlParams = new ArrayList<String>();

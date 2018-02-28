@@ -4,7 +4,7 @@ import com.fantasi.common.db.process.Filter;
 
 import java.util.Stack;
 
-public class SatifyComplexProcess extends BaseComplexProcess implements IComplexProcess{
+public class SatifyComplexProcess extends BaseComplexProcess implements IComplexProcess {
 	boolean outFlag = false;
 
 	Stack<Boolean> resultStack = new Stack<Boolean>();

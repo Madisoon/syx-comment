@@ -159,16 +159,14 @@ public class TaskConfigController {
     @ApiOperation(value = "getAllNoteInformation", notes = "删除任务")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "sysPacketNo", value = "系统的数据包编码", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "depNo", value = "部门编码", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "userName", value = "用户登陆名称", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "userAccount", value = "用户登陆名称", required = true, dataType = "STRING")
     })
     public ResponseEntity getAllNoteInformation(@RequestParam("sysPacketNo") String sysPacketNo,
-                                                @RequestParam("depNo") String depNo,
-                                                @RequestParam("userName") String userName,
+                                                @RequestParam("userAccount") String userAccount,
                                                 @RequestParam("pageSize") String pageSize,
                                                 @RequestParam("pageNumber") String pageNumber) {
         try {
-            JSONObject jsonObject = taskConfigService.getAllNoteInformation(sysPacketNo, depNo, userName, pageSize, pageNumber);
+            JSONObject jsonObject = taskConfigService.getAllNoteInformation(sysPacketNo, userAccount, pageSize, pageNumber);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
@@ -219,13 +217,29 @@ public class TaskConfigController {
     @ApiOperation(value = "getTaskReleaseByNumber", notes = "删除任务")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "taskNumber", value = "任务编号", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "depNo", value = "部门的编号", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "userAccount", value = "个人账号", required = true, dataType = "STRING")
     })
     public ResponseEntity getTaskReleaseByNumber(@RequestParam("taskNumber") String taskNumber,
-                                                 @RequestParam("depNo") String depNo) {
+                                                 @RequestParam("userAccount") String userAccount) {
         try {
-            JSONObject jsonObject = taskConfigService.getTaskReleaseByNumber(taskNumber, depNo);
+            JSONObject jsonObject = taskConfigService.getTaskReleaseByNumber(taskNumber, userAccount);
             return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @PostMapping(value = "/updateTaskReleaseStatus")
+    @ApiOperation(value = "updateTaskReleaseStatus", notes = "发布任务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "任务id", required = true, dataType = "STRING")
+    })
+    public ResponseEntity updateTaskReleaseStatus(@RequestParam("id") String id) {
+        try {
+            SysTaskRelease sysTaskRelease = taskConfigService.updateTaskReleaseStatus(id);
+            return ResponseEntity.ok().body(sysTaskRelease);
         } catch (Exception e) {
             e.printStackTrace();
             ExecResult er = new ExecResult(false, e.getMessage());

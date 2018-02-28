@@ -2,7 +2,6 @@ package com.syx.comment.module.sys.web;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.syx.comment.entity.SysArea;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.impl.UserManageServiceImpl;
 import io.swagger.annotations.ApiImplicitParam;
@@ -12,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 描述:
@@ -33,7 +34,9 @@ public class UserController {
             @ApiImplicitParam(name = "userPwd", value = "用户密码", required = true, dataType = "STRING")
     })
     public ResponseEntity judgeUser(@RequestParam("userName") String userName,
-                                    @RequestParam("userPwd") String userPwd) {
+                                    @RequestParam("userPwd") String userPwd, HttpServletRequest request) {
+        request.getSession().setAttribute("uid", "5521");
+        request.getSession().setAttribute("name", "coco");
         try {
             JSONObject jsonObject = userManageService.judgeUser(userName, userPwd);
             return ResponseEntity.ok().body(jsonObject);
@@ -111,6 +114,22 @@ public class UserController {
                                                   @RequestParam("pageNumber") String pageNumber) {
         try {
             JSONObject jsonObject = userManageService.getUserInformationByDep(roleType, sysPacketNo, depNo, pageSize, pageNumber);
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @ApiOperation(value = "getPersonInformationByUserAccount", notes = "根据账号获取此人的身份特征")
+    @PostMapping(value = "/getPersonInformationByUserAccount")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userAccount", value = "用户账号", required = true, dataType = "STRING")
+    })
+    public ResponseEntity getPersonInformationByUserAccount(@RequestParam("userAccount") String userAccount) {
+        try {
+            JSONObject jsonObject = userManageService.getPersonInformationByUserAccount(userAccount);
             return ResponseEntity.ok().body(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();

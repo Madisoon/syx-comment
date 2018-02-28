@@ -17,8 +17,8 @@ public class SysTaskFinish {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "task_relese_id")
-    private String taskReleseId;
+    @Column(name = "task_release_id")
+    private Long taskReleaseId;
 
     @Column(name = "task_number")
     private String taskNumber;
@@ -68,6 +68,12 @@ public class SysTaskFinish {
     @Column(name = "task_check_time")
     private Date taskCheckTime;
 
+    @Column(name = "is_stick")
+    private int isStick;
+
+    @Column(name = "is_star")
+    private int isStar;
+
     @Column(name = "check_account")
     private String checkAccount;
 
@@ -88,12 +94,12 @@ public class SysTaskFinish {
         this.id = id;
     }
 
-    public String getTaskReleseId() {
-        return taskReleseId;
+    public Long getTaskReleaseId() {
+        return taskReleaseId;
     }
 
-    public void setTaskReleseId(String taskReleseId) {
-        this.taskReleseId = taskReleseId;
+    public void setTaskReleaseId(Long taskReleaseId) {
+        this.taskReleaseId = taskReleaseId;
     }
 
     public String getTaskNumber() {
@@ -226,6 +232,22 @@ public class SysTaskFinish {
 
     public String getCheckAccount() {
         return checkAccount;
+    }
+
+    public int getIsStick() {
+        return isStick;
+    }
+
+    public void setIsStick(int isStick) {
+        this.isStick = isStick;
+    }
+
+    public int getIsStar() {
+        return isStar;
+    }
+
+    public void setIsStar(int isStar) {
+        this.isStar = isStar;
     }
 
     public void setCheckAccount(String checkAccount) {

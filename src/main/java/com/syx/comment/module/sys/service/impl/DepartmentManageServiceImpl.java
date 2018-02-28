@@ -58,7 +58,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
 
     @Override
     public JSONArray getDepartmentInformation(String depPacketNo) {
-        String sql = " SELECT a.id ,a.dep_no AS depNo,a.dep_name AS depName,b.user_account AS userAccount,  " +
+        String sql = " SELECT a.id ,a.dep_no AS depNo,a.dep_color AS depColor,a.dep_name AS depName,b.user_account AS userAccount,  " +
                 "b.user_password AS userPassword,b.id AS userId  " +
                 "FROM sys_department a LEFT JOIN sys_user b ON  a.dep_no = b.user_dep  " +
                 "LEFT JOIN sys_role_user c ON b.user_account=c.user_account " +
@@ -94,17 +94,17 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     }
 
     @Override
-    public JSONArray listDepartmentUserByDepNo(String depNo) {
+    public JSONArray listDepartmentUserByDepNo(String depNo, String packetNo) {
         String sql = "";
         List list = new ArrayList(16);
         if ("".equals(depNo)) {
             sql = "SELECT b.user_name ,b.user_dep AS dep_pid, b.id " +
                     "FROM  sys_department a ,sys_user b " +
-                    "WHERE a.dep_no = b.user_dep " +
+                    "WHERE a.dep_no = b.user_dep  AND a.packet_no = ?  " +
                     "UNION " +
                     "SELECT dep_name AS user_name ,id = 0 AS dep_pid ,dep_no AS id  " +
-                    "FROM  sys_department ";
-            list = baseDao.rawQuery(sql);
+                    "FROM  sys_department WHERE packet_no = ? ";
+            list = baseDao.rawQuery(sql, new String[]{packetNo, packetNo});
         } else {
             sql = "SELECT b.user_name ,b.user_dep AS dep_pid, b.id " +
                     "FROM  sys_department a ,sys_user b " +

@@ -12,12 +12,12 @@ import java.util.Map;
 public class BaseDictDao extends BaseTableDao {
 	public String tableName;
 	
-	public BaseDictDao(IDBPool pool,String tableName) {
+	public BaseDictDao(IDBPool pool, String tableName) {
 		super(pool);
 		this.tableName = tableName;
 	}
 	
-	public BaseDictDao(IDBPool pool,String tableName, String[] primaryKeys) {
+	public BaseDictDao(IDBPool pool, String tableName, String[] primaryKeys) {
 		super(pool, primaryKeys);
 		this.tableName = tableName;
 	}

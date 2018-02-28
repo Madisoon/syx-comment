@@ -38,7 +38,7 @@ public abstract class TransactionService {
 	 * @return
 	 * @throws TransactionException
 	 */
-	protected <T> T execute(Callback<T> callback) throws TransactionException{
+	protected <T> T execute(Callback<T> callback) throws TransactionException {
 		Connection conn = null;
 		try {
 			conn = pool.getConnection();

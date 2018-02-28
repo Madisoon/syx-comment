@@ -2,7 +2,6 @@ package com.syx.comment.repository;
 
 import com.syx.comment.entity.SysAreaPacket;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 /**
  * 描述:

@@ -23,6 +23,9 @@ public class SysDepartment {
     @Column(name = "dep_name")
     private String depName;
 
+    @Column(name = "dep_color")
+    private String depColor;
+
     @Column(name = "packet_no")
     private String packetNo;
 
@@ -46,6 +49,14 @@ public class SysDepartment {
 
     public void setDepNo(String depNo) {
         this.depNo = depNo;
+    }
+
+    public String getDepColor() {
+        return depColor;
+    }
+
+    public void setDepColor(String depColor) {
+        this.depColor = depColor;
     }
 
     public String getDepName() {

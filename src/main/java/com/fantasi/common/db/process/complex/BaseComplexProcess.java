@@ -1,6 +1,6 @@
 package com.fantasi.common.db.process.complex;
 
-public abstract class BaseComplexProcess implements IComplexProcess{
+public abstract class BaseComplexProcess implements IComplexProcess {
 	 public void begin(boolean reverse, int relation) {}
 
      public void end(boolean reverse) {}

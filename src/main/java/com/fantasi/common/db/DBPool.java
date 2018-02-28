@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBPool implements IDBPool{
+public class DBPool implements IDBPool {
 	
 	private String connectURI;
 	private String username;

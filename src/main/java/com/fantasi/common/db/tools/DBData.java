@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.List;
 
-public class DBData extends DBBase{
+public class DBData extends DBBase {
 	
 	public DBData(IDBPool context) {
 		super(context);
