@@ -4,15 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
-import com.syx.comment.entity.SysNotice;
-import com.syx.comment.entity.SysTaskDiscuss;
-import com.syx.comment.entity.SysTaskFinish;
-import com.syx.comment.entity.SysTaskRelease;
+import com.syx.comment.entity.*;
 import com.syx.comment.module.task.service.TaskPostService;
-import com.syx.comment.repository.SysNoticeRepository;
-import com.syx.comment.repository.SysTaskDiscussRepository;
-import com.syx.comment.repository.SysTaskFinishRepository;
-import com.syx.comment.repository.SysTaskReleaseRepository;
+import com.syx.comment.repository.*;
 import com.syx.comment.utils.DataExport;
 import com.syx.comment.utils.SqlEasy;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +43,9 @@ public class TaskPostServiceImpl implements TaskPostService {
 
     @Autowired
     SysTaskReleaseRepository sysTaskReleaseRepository;
+
+    @Autowired
+    SysFinishTabRepository sysFinishTabRepository;
 
     // jpa 使用原生sql语句
     @PersistenceContext
@@ -90,20 +87,22 @@ public class TaskPostServiceImpl implements TaskPostService {
         if ("{}".equals(searchData)) {
             String sqlTotal = " SELECT a.*,GROUP_CONCAT(b.discuss_content) AS discuss_contents, " +
                     " GROUP_CONCAT(b.user_account) AS user_accounts ,GROUP_CONCAT(b.gmt_create) gmt_creates " +
-                    " FROM (SELECT a.*,c.task_config_name,c.task_mark AS max_mark,d.user_account AS post_account,d.task_name AS post_task_name,c.task_color  FROM sys_task_finish a ,  " +
-                    " sys_task_config c,sys_task_release d   ";
+                    " FROM (SELECT a.*,c.task_config_name,c.task_mark AS max_mark,d.user_account AS post_account,d.task_name AS post_task_name,c.task_color  ";
             if ("".equals(depNo)) {
                 if ("1".equals(taskType)) {
                     // 用户自己看
-                    sqlTotal += "WHERE a.user_account = ?  ";
+                    sqlTotal += " FROM ( SELECT * FROM sys_task_finish a WHERE a.task_release_id IN  " +
+                            "(SELECT task_release_id FROM  sys_task_finish a  " +
+                            "WHERE a.user_account = ?) ) a , sys_task_config c,sys_task_release d WHERE a.user_account <> ''  ";
                 } else {
                     // 审核的人员看
-                    sqlTotal += "WHERE d.user_account = ?  ";
+                    sqlTotal += "FROM sys_task_finish a , sys_task_config c,sys_task_release d  WHERE d.user_account = ?  ";
                 }
             } else {
-                sqlTotal += ",sys_user e WHERE a.user_account = e.user_account AND e.user_dep = ? ";
+                sqlTotal += "FROM sys_task_finish a , sys_task_config c,sys_task_release d ," +
+                        "sys_user e WHERE a.user_account = e.user_account AND e.user_dep = ? ";
             }
-            sqlTotal += " AND a.task_type = c.id AND a.task_status = ?  AND a.task_release_id = d.id " +
+            sqlTotal += " AND a.task_type = c.id AND a.task_status = ? AND a.task_release_id = d.id " +
                     " ) a LEFT JOIN sys_task_discuss b " +
                     " ON a.id = b.task_id GROUP BY a.id ORDER BY a.is_stick DESC ,a.gmt_create DESC  ";
             String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
@@ -124,19 +123,20 @@ public class TaskPostServiceImpl implements TaskPostService {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(" SELECT a.*,GROUP_CONCAT(b.discuss_content) AS discuss_contents, " +
                     " GROUP_CONCAT(b.user_account) AS user_accounts ,GROUP_CONCAT(b.gmt_create) gmt_creates " +
-                    " FROM (SELECT a.*,c.task_config_name,c.task_mark AS max_mark,d.user_account AS post_account,d.task_name AS post_task_name, c.task_color  FROM sys_task_finish a ,  " +
-                    " sys_task_config c,sys_task_release d ");
+                    " FROM (SELECT a.*,c.task_config_name,c.task_mark AS max_mark,d.user_account AS post_account,d.task_name AS post_task_name, c.task_color ");
             if ("".equals(depNo)) {
                 if ("1".equals(taskType)) {
                     // 用户自己看
-                    stringBuffer.append("WHERE a.user_account = ?  ");
+                    stringBuffer.append(" FROM ( SELECT * FROM sys_task_finish a WHERE a.task_release_id IN  " +
+                            "(SELECT task_release_id FROM  sys_task_finish a  " +
+                            "WHERE a.user_account = ?) ) a , sys_task_config c,sys_task_release d WHERE a.user_account <> ''  ");
                 } else {
                     // 审核的人员看
-                    stringBuffer.append("WHERE d.user_account = ?  ");
-
+                    stringBuffer.append("FROM sys_task_finish a , sys_task_config c,sys_task_release d  WHERE d.user_account = ?  ");
                 }
             } else {
-                stringBuffer.append(",sys_user e WHERE a.user_account = e.user_account AND e.user_dep = ? ");
+                stringBuffer.append("FROM sys_task_finish a , sys_task_config c,sys_task_release d ," +
+                        "sys_user e WHERE a.user_account = e.user_account AND e.user_dep = ? ");
             }
             Set set = jsonObjectData.keySet();
             Iterator<String> iterator = set.iterator();
@@ -167,6 +167,7 @@ public class TaskPostServiceImpl implements TaskPostService {
             stringBuffer.append(" AND a.task_type = c.id AND a.task_status = ?  AND a.task_release_id = d.id " +
                     " ) a LEFT JOIN sys_task_discuss b " +
                     " ON a.id = b.task_id GROUP BY a.id ORDER BY a.is_stick DESC ,a.gmt_create DESC  ");
+            System.out.println(stringBuffer.toString());
             String param = "";
             if ("".equals(depNo)) {
                 param = userAccount;
@@ -357,6 +358,14 @@ public class TaskPostServiceImpl implements TaskPostService {
     @Override
     public SysTaskFinish saveTaskFinishMark(String taskId, String taskMark, String userAccount) {
         SysTaskFinish sysTaskFinish = sysTaskFinishRepository.findOne(Long.parseLong(taskId));
+        String userAccountPost = sysTaskFinish.getUserAccount();
+        Long releaseId = sysTaskFinish.getTaskReleaseId();
+        SysFinishTab sysFinishTab = new SysFinishTab();
+        sysFinishTab.setTaskId(releaseId);
+        sysFinishTab.setUserAccount(userAccountPost);
+        sysFinishTab.setGmtCreate(new Date());
+        sysFinishTab.setGmtModified(new Date());
+        sysFinishTabRepository.save(sysFinishTab);
         sysTaskFinish.setGmtModified(new Date());
         sysTaskFinish.setTaskMark(Double.parseDouble(taskMark));
         sysTaskFinish.setCheckAccount(userAccount);

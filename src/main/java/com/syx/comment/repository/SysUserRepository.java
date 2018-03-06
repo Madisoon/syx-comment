@@ -27,5 +27,5 @@ public interface SysUserRepository extends JpaRepository<SysUser, Long> {
      * @param userDep
      * @return
      */
-    List<SysUser> findSysUserByUserDep(int userDep);
+    List<SysUser> findSysUserByUserDep(Long userDep);
 }

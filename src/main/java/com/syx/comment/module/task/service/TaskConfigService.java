@@ -50,15 +50,6 @@ public interface TaskConfigService {
     JSONArray getTaskReleaseInformation(String userAccount);
 
     /**
-     * 保存任务适用部门的信息
-     *
-     * @param taskId
-     * @param taskDep
-     * @return
-     */
-    List<SysTaskReleaseUser> saveTaskDepartmentInformation(String taskId, String taskDep);
-
-    /**
      * 根据id删除所有的配置的信息
      *
      * @param taskConfigId

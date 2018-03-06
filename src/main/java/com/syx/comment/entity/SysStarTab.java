@@ -5,14 +5,14 @@ import java.util.Date;
 
 /**
  * 描述:
- * 任务已读标记entiy
+ * 任务标星的功能
  *
  * @author Msater Zg
- * @create 2017-12-29 16:49
+ * @create 2018-03-03 19:29
  */
 @Entity
-@Table(name = "sys_read_tab")
-public class SysReadTab {
+@Table(name = "sys_star_tab")
+public class SysStarTab {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

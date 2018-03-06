@@ -56,7 +56,7 @@ public class PacketManageServiceImpl implements PacketManageService {
         SysPacket sysPacketReturn = sysPacketRepository.save(sysPacket);
         // 用户添加默认值
         sysUser.setPacketNo(Long.parseLong(sysPacket.getPacketNo()));
-        sysUser.setUserName("admin");
+        sysUser.setUserName("管理员");
         sysUser.setGmtCreate(new Date());
         sysUser.setGmtModified(new Date());
         sysUserRepository.save(sysUser);
@@ -119,13 +119,13 @@ public class PacketManageServiceImpl implements PacketManageService {
         }
         SysPacket sysPacketData = sysPacketRepository.getOne(Long.parseLong(packetId));
         String packetNo = sysPacketData.getPacketNo();
-        String deleteConfig = "DELETE FROM  sys_task_config WHERE task_packet_no = " + packetNo + " ";
+        String deleteConfig = "DELETE FROM  sys_task_config WHERE packet_no = " + packetNo + " ";
         baseDao.execute(deleteConfig, null);
-        String finishConfig = "DELETE FROM  sys_task_finish WHERE task_packet_no = " + packetNo + " ";
+        String finishConfig = "DELETE FROM  sys_task_finish WHERE packet_no = " + packetNo + " ";
         baseDao.execute(finishConfig, null);
-        String releaseConfig = " DELETE FROM  sys_task_release WHERE  task_packet_no = " + packetNo + " ";
+        String releaseConfig = " DELETE FROM  sys_task_release WHERE  packet_no = " + packetNo + " ";
         baseDao.execute(releaseConfig, null);
-        String userConfig = " DELETE FROM  sys_user WHERE user_packet_no = " + packetNo + " ";
+        String userConfig = " DELETE FROM  sys_user WHERE packet_no = " + packetNo + " ";
         baseDao.execute(userConfig, null);
 
         JSONObject jsonObject = new JSONObject();

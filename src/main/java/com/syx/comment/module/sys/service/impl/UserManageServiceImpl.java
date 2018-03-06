@@ -5,18 +5,24 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
 import com.syx.comment.config.JwtConfig;
+import com.syx.comment.entity.SysLog;
 import com.syx.comment.entity.SysPacket;
 import com.syx.comment.entity.SysRoleUser;
 import com.syx.comment.entity.SysUser;
 import com.syx.comment.module.sys.service.UserManageService;
+import com.syx.comment.repository.SysLogRepository;
 import com.syx.comment.repository.SysPacketRepository;
 import com.syx.comment.repository.SysRoleUserRepository;
 import com.syx.comment.repository.SysUserRepository;
+import com.syx.comment.utils.DateOrTimeUtil;
 import com.syx.comment.utils.SqlEasy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sound.midi.Soundbank;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +55,9 @@ public class UserManageServiceImpl implements UserManageService {
 
     @Autowired
     SysRoleUserRepository sysRoleUserRepository;
+
+    @Autowired
+    SysLogRepository sysLogRepository;
 
     @Autowired
     BaseDao baseDao;
@@ -92,25 +101,39 @@ public class UserManageServiceImpl implements UserManageService {
 
     @Override
     public JSONObject getUserInformation(String userAccount) {
+        String sql = "SELECT * FROM sys_log a WHERE a.user_account = ? AND a.gmt_modified LIKE '%" + DateOrTimeUtil.getNowTimeByDifferentFormat("yyyy-MM-dd") + "%' ";
+        Map<String, String> map = baseDao.rawQueryForMap(sql, new String[]{userAccount});
+        SysLog sysLog = new SysLog();
+        if (map == null) {
+            sysLog.setLogType(0);
+            sysLog.setUserAccount(userAccount);
+            sysLog.setLogContent("登陆");
+            sysLog.setGmtCreate(new Date());
+            sysLog.setGmtModified(new Date());
+        } else {
+            sysLog = sysLogRepository.findOne(Long.parseLong(map.get("id")));
+            sysLog.setGmtModified(new Date());
+        }
+        sysLogRepository.save(sysLog);
         JSONObject returnJson = new JSONObject();
         List<String> listModule = new ArrayList<>();
         listModule.add("SELECT f.id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
         listModule.add("FROM sys_user a,sys_role_user b,sys_role c,sys_role_menu d,sys_menu f  ");
-        listModule.add("WHERE a.user_account = '" + userAccount + "'  ");
+        listModule.add("WHERE a.user_account = ?  ");
         listModule.add("AND a.user_account = b.user_account AND b.role_id = c.id  ");
         listModule.add("AND b.role_id = d.role_id AND d.menu_id = f.id  ");
         listModule.add("AND f.menu_pid = 0 ORDER BY f.menu_sort ");
         List<String> listFunction = new ArrayList<>();
         listFunction.add("SELECT a.*,b.menu_name AS menu_parent_name,b.menu_attr AS menu_parent_attr FROM (SELECT f.id,f.menu_pid,f.menu_name,f.menu_content,f.menu_attr ");
         listFunction.add("FROM sys_user a,sys_role_user b,sys_role c,sys_role_menu d,sys_menu f  ");
-        listFunction.add(" WHERE a.user_account = '" + userAccount + "'  ");
+        listFunction.add(" WHERE a.user_account = ?  ");
         listFunction.add(" AND a.user_account = b.user_account AND b.role_id = c.id  ");
         listFunction.add("AND b.role_id = d.role_id AND d.menu_id = f.id  ");
-        listFunction.add("AND f.menu_pid <> 0) a LEFT JOIN sys_menu b ON a.menu_pid = b.id ");
+        listFunction.add("AND f.menu_pid <> 0 ORDER BY f.menu_sort ) a LEFT JOIN sys_menu b ON a.menu_pid = b.id ");
         String listModuleString = StringUtils.join(listModule, "");
         String listFunctionString = StringUtils.join(listFunction, "");
-        List<Map<String, String>> execResultModule = baseDao.rawQuery(listModuleString);
-        List<Map<String, String>> execResultFunction = baseDao.rawQuery(listFunctionString);
+        List<Map<String, String>> execResultModule = baseDao.rawQuery(listModuleString, new String[]{userAccount});
+        List<Map<String, String>> execResultFunction = baseDao.rawQuery(listFunctionString, new String[]{userAccount});
         JSONArray jsonArrayModule = (JSONArray) JSON.toJSON(execResultModule);
         JSONArray jsonArrayFunction = (JSONArray) JSON.toJSON(execResultFunction);
         JSONArray jsonObjectFunction = new JSONArray();
@@ -134,8 +157,12 @@ public class UserManageServiceImpl implements UserManageService {
 
     @Override
     public SysUser saveUserInformation(SysUser sysUser, String roleType) {
+        if (sysUser.getUserPassword() == null) {
+            SysUser sysUserPassword = sysUserRepository.findSysUserByUserAccount(sysUser.getUserAccount());
+            sysUser.setUserPassword(sysUserPassword.getUserPassword());
+        }
         sysUser.setGmtCreate(new Date());
-        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserAccount(sysUser.getUserName());
+        SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserAccount(sysUser.getUserAccount());
         if (sysRoleUser == null) {
             sysRoleUser = new SysRoleUser();
             if (ROLE_TYPE.equals(roleType)) {
@@ -158,14 +185,16 @@ public class UserManageServiceImpl implements UserManageService {
         for (int i = 0; i < userIdSLen; i++) {
             SysUser sysUser = new SysUser();
             sysUser.setId(Long.parseLong(userIdS[i]));
-            sysUser.setUserName("");
+            sysUser.setUserAccount("");
             list.add(sysUser);
             SysUser sysUserData = sysUserRepository.findOne(Long.parseLong(userIdS[i]));
-            String userName = sysUserData.getUserName();
-            String roleDelete = "DELETE FROM sys_role_user WHERE user_id = ? ";
-            baseDao.execute(roleDelete, new String[]{userName});
-            String finishDelete = "DELETE FROM sys_task_finish WHERE task_creater = ? ";
-            baseDao.execute(roleDelete, new String[]{finishDelete});
+            String userAccount = sysUserData.getUserAccount();
+            String roleDelete = "DELETE FROM sys_role_user WHERE user_account = ? ";
+            baseDao.execute(roleDelete, new String[]{userAccount});
+            String finishDelete = "DELETE FROM sys_task_finish WHERE user_account = ? ";
+            baseDao.execute(finishDelete, new String[]{userAccount});
+            String releaseUser = "DELETE FROM sys_task_release_user WHERE user_account = ? ";
+            baseDao.execute(releaseUser, new String[]{userAccount});
         }
         try {
             // 删除角色
@@ -203,6 +232,9 @@ public class UserManageServiceImpl implements UserManageService {
 
     @Override
     public JSONObject getPersonInformationByUserAccount(String userAccount) {
-        return null;
+        String sql = "SELECT * FROM sys_user a ,sys_packet b " +
+                "WHERE a.packet_no = b.packet_no AND a.user_account = ? ";
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(baseDao.rawQueryForMap(sql, new String[]{userAccount}));
+        return jsonObject;
     }
 }

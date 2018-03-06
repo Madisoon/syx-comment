@@ -43,7 +43,7 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     public SysDepartment saveDepartmentInformation(SysDepartment sysDepartment, SysUser sysUser) {
         sysDepartment.setGmtCreate(new Date());
         SysDepartment sysDepartmentReturn = sysDepartmentRepository.save(sysDepartment);
-        sysUser.setUserName("admin");
+        sysUser.setUserName("管理员");
         sysUser.setGmtCreate(new Date());
         sysUserRepository.save(sysUser);
         SysRoleUser sysRoleUser = sysRoleUserRepository.findSysRoleUserByUserAccount(sysUser.getUserAccount());
@@ -71,20 +71,20 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
     public void deleteDepartment(Long id) {
         SysDepartment sysDepartment = sysDepartmentRepository.getOne(id);
         String depNo = sysDepartment.getDepNo();
-        List<SysUser> userList = sysUserRepository.findSysUserByUserDep(Integer.parseInt(depNo));
+        List<SysUser> userList = sysUserRepository.findSysUserByUserDep(Long.parseLong(depNo));
         int userListLen = userList.size();
         for (int i = 0; i < userListLen; i++) {
             SysUser sysUser = userList.get(i);
-            String userName = sysUser.getUserName();
-            String roleDelete = "DELETE FROM sys_role_user WHERE user_id = ? ";
-            baseDao.execute(roleDelete, new String[]{userName});
-            String finishDelete = "DELETE FROM sys_task_finish WHERE task_creater = ? ";
-            baseDao.execute(roleDelete, new String[]{finishDelete});
+            String userAccount = sysUser.getUserAccount();
+            String roleDelete = "DELETE FROM sys_role_user WHERE user_account = ? ";
+            baseDao.execute(roleDelete, new String[]{userAccount});
+            String finishDelete = "DELETE FROM sys_task_finish WHERE user_account = ? ";
+            baseDao.execute(finishDelete, new String[]{userAccount});
+            String releaseUser = "DELETE FROM sys_task_release_user WHERE user_account = ? ";
+            baseDao.execute(releaseUser, new String[]{userAccount});
         }
         String dep = "DELETE FROM sys_user WHERE user_dep = ? ";
         baseDao.execute(dep, new String[]{depNo});
-        String releaseDelete = "DELETE FROM sys_task_release_department WHERE dep_no = ? ";
-        baseDao.execute(releaseDelete, new String[]{depNo});
         sysDepartmentRepository.delete(id);
     }
 

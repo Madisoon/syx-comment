@@ -5,26 +5,33 @@ import java.util.Date;
 
 /**
  * 描述:
- * 任务已读标记entiy
+ * 系统日志的entity
  *
  * @author Msater Zg
- * @create 2017-12-29 16:49
+ * @create 2018-03-05 18:32
  */
 @Entity
-@Table(name = "sys_read_tab")
-public class SysReadTab {
+@Table(name = "sys_log")
+public class SysLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "task_id")
-    private Long taskId;
+    @Column(name = "log_type")
+    private int logType;
+
+
+    @Column(name = "log_content")
+    private String logContent;
+
 
     @Column(name = "user_account")
     private String userAccount;
 
+
     @Column(name = "gmt_create")
     private Date gmtCreate;
+
 
     @Column(name = "gmt_modified")
     private Date gmtModified;
@@ -37,12 +44,20 @@ public class SysReadTab {
         this.id = id;
     }
 
-    public Long getTaskId() {
-        return taskId;
+    public int getLogType() {
+        return logType;
     }
 
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+    public void setLogType(int logType) {
+        this.logType = logType;
+    }
+
+    public String getLogContent() {
+        return logContent;
+    }
+
+    public void setLogContent(String logContent) {
+        this.logContent = logContent;
     }
 
     public String getUserAccount() {

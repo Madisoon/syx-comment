@@ -42,6 +42,9 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     SysFinishTabRepository sysFinishTabRepository;
 
     @Autowired
+    SysStarTabRepository sysStarTabRepository;
+
+    @Autowired
     SysUserRepository sysUserRepository;
 
     @Autowired
@@ -97,21 +100,6 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     }
 
     @Override
-    public List<SysTaskReleaseUser> saveTaskDepartmentInformation(String taskId, String taskDep) {
-        String[] taskDepS = taskDep.split(",");
-        int taskDepSLen = taskDepS.length;
-        List<SysTaskReleaseUser> list = new ArrayList<>();
-        /*for (int i = 0; i < taskDepSLen; i++) {
-            SysTaskReleaseUser sysTaskReleaseDepartment = new SysTaskReleaseUser();
-            sysTaskReleaseDepartment.setTaskReleaseId(Long.parseLong(taskId));
-            sysTaskReleaseDepartment.setDepNo(Long.parseLong(taskDepS[i]));
-            list.add(sysTaskReleaseDepartment);
-        }*/
-        list = sysTaskReleaseUserRepository.save(list);
-        return list;
-    }
-
-    @Override
     public JSONObject deleteTaskConfigInformation(String taskConfigId) {
         JSONObject jsonObject = new JSONObject();
         try {
@@ -148,15 +136,17 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
     @Override
     public JSONObject getAllNoteInformation(String sysPacketNo, String userAccount, String pageSize, String pageNumber) {
-        String sqlTotal = " SELECT a.*,b.id AS finish_id,c.id AS read_id FROM (SELECT a.*,c.task_config_name FROM sys_task_release a, " +
+        String sqlTotal = " SELECT a.*,b.id AS finish_id,c.id AS read_id,d.id AS star_id FROM (SELECT a.*,c.task_config_name FROM sys_task_release a, " +
                 " sys_task_release_user b,sys_task_config c  " +
-                " WHERE a.id = b.task_release_id AND a.task_config_id = c.id  " +
-                " AND a.packet_no = ? AND b.receiver_account = ? ORDER BY a.gmt_create DESC ) a  " +
+                " WHERE a.id = b.task_release_id AND a.task_config_id = c.id AND a.is_posted = 1  " +
+                " AND a.packet_no = ? AND b.receiver_account = ? ) a  " +
                 " LEFT JOIN (SELECT * FROM sys_finish_tab WHERE user_account = ? ) b ON a.id = b.task_id  " +
-                " LEFT JOIN (SELECT * FROM sys_read_tab WHERE user_account = ? ) c ON a.id = c.task_id  ";
+                " LEFT JOIN (SELECT * FROM sys_read_tab WHERE user_account = ? ) c ON a.id = c.task_id  " +
+                "LEFT JOIN (SELECT * FROM sys_star_tab WHERE user_account = ? ) d ON a.id = d.task_id " +
+                "ORDER BY a.gmt_create DESC ";
         String sqlSelect = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber) + "";
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, userAccount, userAccount, userAccount}));
-        JSONArray jsonArrayTotal = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo, userAccount, userAccount, userAccount}));
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, userAccount, userAccount, userAccount, userAccount}));
+        JSONArray jsonArrayTotal = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo, userAccount, userAccount, userAccount, userAccount}));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", jsonArray);
         jsonObject.put("total", jsonArrayTotal.size());
@@ -165,17 +155,29 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
     @Override
     public JSONObject tabReadOrFinish(String type, String taskReleaseId, String userName) {
-        String readTab = "0";
-        if (readTab.equals(type)) {
-            SysReadTab sysReadTab = new SysReadTab();
-            sysReadTab.setTaskId(Long.parseLong(taskReleaseId));
-            sysReadTab.setUserName(userName);
-            sysReadTabRepository.save(sysReadTab);
-        } else {
+        String starTab = "0";
+        String finishTab = "1";
+        if (starTab.equals(type)) {
+            SysStarTab sysStarTab = new SysStarTab();
+            sysStarTab.setTaskId(Long.parseLong(taskReleaseId));
+            sysStarTab.setUserAccount(userName);
+            sysStarTab.setGmtCreate(new Date());
+            sysStarTab.setGmtModified(new Date());
+            sysStarTabRepository.save(sysStarTab);
+        } else if (finishTab.equals(type)) {
             SysFinishTab sysFinishTab = new SysFinishTab();
             sysFinishTab.setTaskId(Long.parseLong(taskReleaseId));
             sysFinishTab.setUserAccount(userName);
+            sysFinishTab.setGmtCreate(new Date());
+            sysFinishTab.setGmtModified(new Date());
             sysFinishTabRepository.save(sysFinishTab);
+        } else {
+            SysReadTab sysReadTab = new SysReadTab();
+            sysReadTab.setTaskId(Long.parseLong(taskReleaseId));
+            sysReadTab.setUserAccount(userName);
+            sysReadTab.setGmtCreate(new Date());
+            sysReadTab.setGmtModified(new Date());
+            sysReadTabRepository.save(sysReadTab);
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", 1);
@@ -186,7 +188,7 @@ public class TaskConfigServiceImpl implements TaskConfigService {
     public JSONObject removeReadOrFinish(String type, String id) {
         String readTab = "0";
         if (readTab.equals(type)) {
-            sysReadTabRepository.delete(Long.parseLong(id));
+            sysStarTabRepository.delete(Long.parseLong(id));
         } else {
             sysFinishTabRepository.delete(Long.parseLong(id));
         }

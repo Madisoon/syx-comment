@@ -85,34 +85,12 @@ public class TaskConfigController {
         }
     }
 
-    @PutMapping(value = "/saveTaskDepartmentInformation")
-    @ApiOperation(value = "saveTaskDepartmentInformation", notes = "任务的部门修改")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "taskId", value = "任务的id", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "taskDep", value = "任务的适用部门", required = true, dataType = "STRING")
-    })
-    public ResponseEntity saveTaskDepartmentInformation(@RequestParam("taskId") String taskId,
-                                                        @RequestParam("taskDepartment") String taskDep) {
-        try {
-            List<SysTaskReleaseUser> list = taskConfigService.saveTaskDepartmentInformation(taskId, taskDep);
-            return ResponseEntity.ok().body(list);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ExecResult er = new ExecResult(false, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
-        }
-    }
-
     @GetMapping(value = "/getTaskReleaseInformation")
     @ApiOperation(value = "getTaskReleaseInformation", notes = "发布任务")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userAccount", value = "系统编号", required = true, dataType = "STRING"),
-            /*@ApiImplicitParam(name = "pageSize", value = "每一页的大小", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "pageNumber", value = "页数", required = true, dataType = "STRING")*/
     })
-    public ResponseEntity getTaskReleaseInformation(@RequestParam("userAccount") String userAccount/*,
-                                                    @RequestParam("pageSize") String pageSize,
-                                                    @RequestParam("pageNumber") String pageNumber*/) {
+    public ResponseEntity getTaskReleaseInformation(@RequestParam("userAccount") String userAccount) {
         try {
             JSONArray jsonArray = taskConfigService.getTaskReleaseInformation(userAccount);
             return ResponseEntity.ok().body(jsonArray);

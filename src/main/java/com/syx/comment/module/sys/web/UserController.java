@@ -67,7 +67,7 @@ public class UserController {
     @PutMapping(value = "/saveUserInformation")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userInfo", value = "用户信息", required = true, dataType = "STRING"),
-            @ApiImplicitParam(name = "roleType", value = "人员的信息", required = true, dataType = "STRING")
+            @ApiImplicitParam(name = "roleType", value = "人员的类型", required = true, dataType = "STRING")
     })
     public ResponseEntity saveUserInformation(@RequestParam("userInfo") String userInfo,
                                               @RequestParam("roleType") String roleType) {
@@ -123,7 +123,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "getPersonInformationByUserAccount", notes = "根据账号获取此人的身份特征")
-    @PostMapping(value = "/getPersonInformationByUserAccount")
+    @GetMapping(value = "/getPersonInformationByUserAccount")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userAccount", value = "用户账号", required = true, dataType = "STRING")
     })
