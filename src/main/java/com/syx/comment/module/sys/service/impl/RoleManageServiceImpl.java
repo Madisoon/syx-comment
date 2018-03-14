@@ -35,6 +35,7 @@ public class RoleManageServiceImpl implements RoleManageService {
         JSONArray jsonArray = new JSONArray();
         List<Map<String, String>> list = new ArrayList<>();
         list = tableDao.queryTable("sys_role");
+
         jsonArray = (JSONArray) JSON.toJSON(list);
         return jsonArray;
     }

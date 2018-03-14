@@ -4,18 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fantasi.common.db.dao.BaseDao;
-import com.syx.comment.entity.SysAreaPacket;
-import com.syx.comment.entity.SysPacket;
-import com.syx.comment.entity.SysRoleUser;
-import com.syx.comment.entity.SysUser;
+import com.syx.comment.entity.*;
 import com.syx.comment.module.sys.service.PacketManageService;
-import com.syx.comment.repository.SysAreaPacketRepository;
-import com.syx.comment.repository.SysPacketRepository;
-import com.syx.comment.repository.SysRoleUserRepository;
-import com.syx.comment.repository.SysUserRepository;
+import com.syx.comment.repository.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,7 +42,12 @@ public class PacketManageServiceImpl implements PacketManageService {
     @Autowired
     BaseDao baseDao;
 
+    @Autowired
+    SysTaskConfigRepository sysTaskConfigRepository;
+
     @Override
+    // 发生任何异常都进行回滚操作
+    @Transactional(rollbackFor = {Exception.class})
     public SysPacket savePacketInformation(SysPacket sysPacket, SysUser sysUser, String areaId) {
         // 添加默认值
         sysPacket.setIsUsing(1);
@@ -79,6 +79,17 @@ public class PacketManageServiceImpl implements PacketManageService {
             sysRoleUser.setGmtCreate(new Date());
             sysRoleUserRepository.save(sysRoleUser);
         }
+
+        SysTaskConfig sysTaskConfig = new SysTaskConfig();
+        sysTaskConfig.setGmtCreate(new Date());
+        sysTaskConfig.setGmtModified(new Date());
+        sysTaskConfig.setIsYuqing(1);
+        sysTaskConfig.setPacketNo(Long.parseLong(sysPacketReturn.getPacketNo()));
+        sysTaskConfig.setTaskColor("#00CCFF");
+        sysTaskConfig.setTaskConfigName("舆情上报");
+        sysTaskConfig.setTaskExplain("舆情上报为特殊类型，可结合本公司舆情云系统使用！");
+        sysTaskConfig.setTaskMark(15);
+        sysTaskConfigRepository.save(sysTaskConfig);
         return sysPacketReturn;
     }
 

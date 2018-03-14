@@ -59,7 +59,7 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
     @Override
     public List<SysTaskConfig> getTaskConfigByPacketNo(String packetNo) {
-        return sysTaskConfigRepository.findSysTaskConfigByPacketNo(Long.valueOf(packetNo));
+        return sysTaskConfigRepository.findSysTaskConfigByPacketNoOrderByGmtCreateDesc(Long.valueOf(packetNo));
     }
 
     @Override
@@ -144,8 +144,8 @@ public class TaskConfigServiceImpl implements TaskConfigService {
                 " LEFT JOIN (SELECT * FROM sys_read_tab WHERE user_account = ? ) c ON a.id = c.task_id  " +
                 "LEFT JOIN (SELECT * FROM sys_star_tab WHERE user_account = ? ) d ON a.id = d.task_id " +
                 "ORDER BY a.gmt_create DESC ";
-        String sqlSelect = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber) + "";
-        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect, new String[]{sysPacketNo, userAccount, userAccount, userAccount, userAccount}));
+        StringBuilder sqlSelect = new StringBuilder().append(sqlTotal).append(SqlEasy.limitPage(pageSize, pageNumber));
+        JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlSelect.toString(), new String[]{sysPacketNo, userAccount, userAccount, userAccount, userAccount}));
         JSONArray jsonArrayTotal = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlTotal, new String[]{sysPacketNo, userAccount, userAccount, userAccount, userAccount}));
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("data", jsonArray);
@@ -199,8 +199,8 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
     @Override
     public JSONObject getTaskReleaseByNumber(String taskNumber, String userAccount) {
-        String selectSql = " SELECT * FROM sys_task_release a ,sys_task_release_user b  " +
-                " WHERE a.id = b.task_release_id AND a.task_number = ?  " +
+        String selectSql = " SELECT a.*,b.*,c.task_config_name FROM sys_task_release a ,sys_task_release_user b ,sys_task_config c  " +
+                " WHERE a.id = b.task_release_id AND a.task_config_id = c.id AND a.task_number = ?  " +
                 " AND b.receiver_account = ? AND a.task_end_time >= ? ";
         Map map = baseDao.rawQueryForMap(selectSql, new String[]{taskNumber, userAccount, DateOrTimeUtil.getNowTimeByDifferentFormat("yyyy-MM-dd HH-mm")});
         JSONObject jsonObject = new JSONObject();

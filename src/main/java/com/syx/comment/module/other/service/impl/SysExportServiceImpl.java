@@ -32,26 +32,25 @@ public class SysExportServiceImpl implements SysExportService {
 
     @Override
     public String rankDataExport(String packetNo, String startTime, String endTime, String type, String path) {
-        String url = "";
+        StringBuilder url = new StringBuilder("");
         JSONArray jsonArray = new JSONArray();
         switch (type) {
             case "1":
                 jsonArray = sysRankService.getDepMarkRankData(packetNo, startTime, endTime);
-                url = dataExport.exportDepRankData(jsonArray, path, type);
+                url.append(dataExport.exportDepRankData(jsonArray, path, type));
                 break;
             case "2":
                 jsonArray = sysRankService.getDepTypeRankData(packetNo, startTime, endTime);
-                url = dataExport.exportDepRankData(jsonArray, path, type);
+                url.append(dataExport.exportDepRankData(jsonArray, path, type));
                 break;
             case "3":
                 JSONObject jsonObject = sysRankService.getDepCountRankData(packetNo, startTime, endTime);
-                url = dataExport.exportCountRankData(jsonObject, path);
+                url.append(dataExport.exportCountRankData(jsonObject, path));
                 break;
             default:
-                url = "";
                 break;
         }
-        return url;
+        return url.toString();
     }
 
     @Override

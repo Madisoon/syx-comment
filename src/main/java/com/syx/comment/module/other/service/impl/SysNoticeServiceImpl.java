@@ -45,9 +45,7 @@ public class SysNoticeServiceImpl implements SysNoticeService {
     @Override
     public List<SysNotice> listNoticeInformation(String searchData) {
         List<SysNotice> list = new ArrayList<>();
-        if ("".equals(searchData)) {
-
-        } else {
+        if (!"".equals(searchData)) {
             list = sysNoticeRepository.findSysNoticeByNoticeType(0);
         }
         return list;

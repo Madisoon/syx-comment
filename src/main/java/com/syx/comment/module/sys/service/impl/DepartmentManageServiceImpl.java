@@ -95,24 +95,24 @@ public class DepartmentManageServiceImpl implements DepartmentManageService {
 
     @Override
     public JSONArray listDepartmentUserByDepNo(String depNo, String packetNo) {
-        String sql = "";
+        StringBuilder sql = new StringBuilder();
         List list = new ArrayList(16);
         if ("".equals(depNo)) {
-            sql = "SELECT b.user_name ,b.user_dep AS dep_pid, b.id " +
+            sql.append("SELECT b.user_name ,b.user_dep AS dep_pid, b.id " +
                     "FROM  sys_department a ,sys_user b " +
                     "WHERE a.dep_no = b.user_dep  AND a.packet_no = ?  " +
                     "UNION " +
                     "SELECT dep_name AS user_name ,id = 0 AS dep_pid ,dep_no AS id  " +
-                    "FROM  sys_department WHERE packet_no = ? ";
-            list = baseDao.rawQuery(sql, new String[]{packetNo, packetNo});
+                    "FROM  sys_department WHERE packet_no = ? ");
+            list = baseDao.rawQuery(sql.toString(), new String[]{packetNo, packetNo});
         } else {
-            sql = "SELECT b.user_name ,b.user_dep AS dep_pid, b.id " +
+            sql.append("SELECT b.user_name ,b.user_dep AS dep_pid, b.id " +
                     "FROM  sys_department a ,sys_user b " +
                     "WHERE a.dep_no = b.user_dep AND b.user_dep = ? " +
                     "UNION " +
                     "SELECT dep_name AS user_name ,id = 0 AS dep_pid ,dep_no AS id  " +
-                    "FROM  sys_department  WHERE dep_no = ? ";
-            list = baseDao.rawQuery(sql, new String[]{depNo, depNo});
+                    "FROM  sys_department  WHERE dep_no = ? ");
+            list = baseDao.rawQuery(sql.toString(), new String[]{depNo, depNo});
         }
         JSONArray jsonArray = (JSONArray) JSON.toJSON(list);
         return jsonArray;

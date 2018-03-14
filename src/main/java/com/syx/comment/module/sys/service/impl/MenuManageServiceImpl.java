@@ -79,14 +79,14 @@ public class MenuManageServiceImpl implements MenuManageService {
 
     @Override
     public JSONObject updateModuleInfo(String menuId, String menuName, String menuContent) {
-        String updateModuleSql = "";
+        StringBuilder updateModuleSql = new StringBuilder();
         int result = 0;
         if ("".equals(menuContent)) {
-            updateModuleSql = "UPDATE sys_menu SET menu_name = ? WHERE id = ? ";
-            result = baseDao.execute(updateModuleSql, new String[]{menuName, menuId});
+            updateModuleSql.append("UPDATE sys_menu SET menu_name = ? WHERE id = ? ");
+            result = baseDao.execute(updateModuleSql.toString(), new String[]{menuName, menuId});
         } else {
-            updateModuleSql = "UPDATE sys_menu SET menu_name = ?,menu_content = ? WHERE id = ? ";
-            result = baseDao.execute(updateModuleSql, new String[]{menuName, menuContent, menuId});
+            updateModuleSql.append("UPDATE sys_menu SET menu_name = ?,menu_content = ? WHERE id = ? ");
+            result = baseDao.execute(updateModuleSql.toString(), new String[]{menuName, menuContent, menuId});
         }
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("result", result);

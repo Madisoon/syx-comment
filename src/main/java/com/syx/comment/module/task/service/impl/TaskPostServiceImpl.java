@@ -85,35 +85,35 @@ public class TaskPostServiceImpl implements TaskPostService {
                                              String taskStatus, String pageSize, String pageNumber, String depNo) {
         JSONObject jsonObject = new JSONObject();
         if ("{}".equals(searchData)) {
-            String sqlTotal = " SELECT a.*,GROUP_CONCAT(b.discuss_content) AS discuss_contents, " +
+            StringBuilder sqlTotal = new StringBuilder(" SELECT a.*,GROUP_CONCAT(b.discuss_content) AS discuss_contents, " +
                     " GROUP_CONCAT(b.user_account) AS user_accounts ,GROUP_CONCAT(b.gmt_create) gmt_creates " +
-                    " FROM (SELECT a.*,c.task_config_name,c.task_mark AS max_mark,d.user_account AS post_account,d.task_name AS post_task_name,c.task_color  ";
+                    " FROM (SELECT a.*,c.task_config_name,c.task_mark AS max_mark,d.user_account AS post_account,d.task_name AS post_task_name,c.task_color  ");
             if ("".equals(depNo)) {
                 if ("1".equals(taskType)) {
                     // 用户自己看
-                    sqlTotal += " FROM ( SELECT * FROM sys_task_finish a WHERE a.task_release_id IN  " +
+                    sqlTotal.append(" FROM ( SELECT * FROM sys_task_finish a WHERE a.task_release_id IN  " +
                             "(SELECT task_release_id FROM  sys_task_finish a  " +
-                            "WHERE a.user_account = ?) ) a , sys_task_config c,sys_task_release d WHERE a.user_account <> ''  ";
+                            "WHERE a.user_account = ?) ) a , sys_task_config c,sys_task_release d WHERE a.user_account <> ''  ");
                 } else {
                     // 审核的人员看
-                    sqlTotal += "FROM sys_task_finish a , sys_task_config c,sys_task_release d  WHERE d.user_account = ?  ";
+                    sqlTotal.append("FROM sys_task_finish a , sys_task_config c,sys_task_release d  WHERE d.user_account = ?  ");
                 }
             } else {
-                sqlTotal += "FROM sys_task_finish a , sys_task_config c,sys_task_release d ," +
-                        "sys_user e WHERE a.user_account = e.user_account AND e.user_dep = ? ";
+                sqlTotal.append("FROM sys_task_finish a , sys_task_config c,sys_task_release d ," +
+                        "sys_user e WHERE a.user_account = e.user_account AND e.user_dep = ? ");
             }
-            sqlTotal += " AND a.task_type = c.id AND a.task_status = ? AND a.task_release_id = d.id " +
+            sqlTotal.append(" AND a.task_type = c.id AND a.task_status = ? AND a.task_release_id = d.id " +
                     " ) a LEFT JOIN sys_task_discuss b " +
-                    " ON a.id = b.task_id GROUP BY a.id ORDER BY a.is_stick DESC ,a.gmt_create DESC  ";
+                    " ON a.id = b.task_id GROUP BY a.id ORDER BY a.is_stick DESC ,a.gmt_create DESC  ");
             String sqlPage = sqlTotal + SqlEasy.limitPage(pageSize, pageNumber);
-            String param = "";
+            StringBuilder param = new StringBuilder();
             if ("".equals(depNo)) {
-                param = userAccount;
+                param.append(userAccount);
             } else {
-                param = depNo;
+                param.append(depNo);
             }
-            List<Map<String, String>> list = baseDao.rawQuery(sqlTotal, new String[]{param, taskStatus});
-            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{param, taskStatus}));
+            List<Map<String, String>> list = baseDao.rawQuery(sqlTotal.toString(), new String[]{param.toString(), taskStatus});
+            JSONArray jsonArray = (JSONArray) JSON.toJSON(baseDao.rawQuery(sqlPage, new String[]{param.toString(), taskStatus}));
             jsonObject.put("total", list.size());
             jsonObject.put("data", jsonArray);
             JSONArray allTotal = (JSONArray) JSON.toJSON(list);

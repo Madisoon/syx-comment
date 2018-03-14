@@ -15,8 +15,9 @@ import java.util.List;
 public interface SysTaskConfigRepository extends JpaRepository<SysTaskConfig, Long> {
     /**
      * 根据系统编号查找配置
+     *
      * @param packetNo
      * @return
      */
-    List<SysTaskConfig> findSysTaskConfigByPacketNo(Long packetNo);
+    List<SysTaskConfig> findSysTaskConfigByPacketNoOrderByGmtCreateDesc(Long packetNo);
 }

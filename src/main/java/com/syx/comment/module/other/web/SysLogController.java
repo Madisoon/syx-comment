@@ -1,6 +1,7 @@
 package com.syx.comment.module.other.web;
 
 import com.alibaba.fastjson.JSONObject;
+import com.syx.comment.entity.SysGuide;
 import com.syx.comment.module.other.service.SysLogService;
 import com.syx.comment.module.sys.web.ExecResult;
 import io.swagger.annotations.ApiImplicitParam;
@@ -42,6 +43,44 @@ public class SysLogController {
         try {
             JSONObject jsonObject = sysLogService.listSysLog(pageNumber, pageSize);
             return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @GetMapping(value = "/userIsGuide")
+    @ApiOperation(value = "userIsGuide", notes = "获取用户的指导页数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userAccount", value = "用户账号名", required = true, dataType = "STRING"),
+    })
+    public ResponseEntity userIsGuide(@RequestParam("userAccount") String userAccount) {
+        try {
+            SysGuide sysGuide = sysLogService.userIsGuide(userAccount);
+            JSONObject jsonObject = new JSONObject();
+            if (sysGuide != null) {
+                jsonObject.put("result", 1);
+            } else {
+                jsonObject.put("result", 0);
+            }
+            return ResponseEntity.ok().body(jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ExecResult er = new ExecResult(false, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(er);
+        }
+    }
+
+    @GetMapping(value = "/saveUserAccountGuide")
+    @ApiOperation(value = "saveUserAccountGuide", notes = "插入指导页")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userAccount", value = "用户账号名", required = true, dataType = "STRING"),
+    })
+    public ResponseEntity saveUserAccountGuide(@RequestParam("userAccount") String userAccount) {
+        try {
+            SysGuide sysGuide = sysLogService.saveUserAccountGuide(userAccount);
+            return ResponseEntity.ok().body(sysGuide);
         } catch (Exception e) {
             e.printStackTrace();
             ExecResult er = new ExecResult(false, e.getMessage());
